@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.env
+*.log
+*.db
+frontend/build/
+backend/lunch_app.db
