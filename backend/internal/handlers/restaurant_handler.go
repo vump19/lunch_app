@@ -71,6 +71,14 @@ func CreateRestaurant(c *gin.Context) {
 		return
 	}
 
+	// 중복 검사 (이름과 주소로 검사) - soft delete된 항목 제외
+	var existingRestaurant models.Restaurant
+	result := database.DB.Where("name = ? AND address = ?", restaurant.Name, restaurant.Address).Where("deleted_at IS NULL").First(&existingRestaurant)
+	if result.Error == nil {
+		c.JSON(http.StatusConflict, gin.H{"error": "이미 등록된 맛집입니다"})
+		return
+	}
+
 	// 기본값 설정
 	if restaurant.Category == "" {
 		restaurant.Category = "음식점"
