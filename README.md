@@ -186,7 +186,7 @@ Render.com을 사용하면 AWS보다 간단하고 무료로 애플리케이션�
 2. "Static Site" 선택
 3. GitHub 저장소 연결
 4. 빌드 설정:
-   - Build Command: `cd frontend && npm install && npm run build`
+   - Build Command: `npm run build` (루트 package.json의 스크립트 사용)
    - Publish Directory: `frontend/build`
 5. 환경 변수 설정:
    ```
@@ -203,3 +203,15 @@ Render.com을 사용하면 AWS보다 간단하고 무료로 애플리케이션�
    - Environment: `Go`
    - Build Command: `cd backend && go build -o main cmd/api/main.go`
    - Start Command: `./main`
+   - Root Directory: `backend` (중요!)
+
+### 4. 배포 순서 및 주의사항
+1. **백엔드를 먼저 배포**하고 URL을 확인
+2. **프론트엔드 배포 시** 백엔드 URL을 환경변수로 설정
+3. **카카오맵 API 키**는 반드시 설정해야 함
+4. 배포 후 프론트엔드에서 백엔드 연결 확인
+
+### 5. 문제 해결
+- **빌드 실패 시**: Render.com 로그에서 오류 확인
+- **API 연결 실패 시**: 환경변수 `REACT_APP_API_BASE_URL` 확인
+- **지도 로딩 실패 시**: `REACT_APP_KAKAO_MAP_APP_KEY` 확인
