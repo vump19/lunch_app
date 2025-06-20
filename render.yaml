@@ -10,6 +10,8 @@ services:
         value: $PORT
       - key: GIN_MODE
         value: release
+      - key: DATABASE_URL
+        value: $DATABASE_URL
     
   # 프론트엔드 서비스  
   - type: web
@@ -26,3 +28,4 @@ services:
       - type: rewrite
         source: /*
         destination: /index.html
+
