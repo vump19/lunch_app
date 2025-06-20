@@ -50,7 +50,7 @@ export const addRestaurant = async (place: any) => {
 // 맛집 삭제 API 함수 수정
 export const deleteRestaurant = async (id: number) => {
   try {
-    const url = `${API_BASE_URL}/api/restaurants/${id}/`;
+    const url = `${API_BASE_URL}/api/restaurants/${id}`;
     console.log('📡 Deleting restaurant from:', url);
     const response = await axios.delete(url);
     return response.data;
@@ -106,7 +106,7 @@ export const addVisit = async (restaurantId: number) => {
 
 export const deleteVisit = async (id: number) => {
   try {
-    const url = `${API_BASE_URL}/api/visits/${id}/`;
+    const url = `${API_BASE_URL}/api/visits/${id}`;
     console.log('📡 Deleting visit from:', url);
     const response = await axios.delete(url);
     return response.data;
