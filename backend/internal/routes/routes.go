@@ -7,6 +7,9 @@ import (
 )
 
 func Setup(router *gin.Engine) {
+	// Health check endpoint (outside API group for simplicity)
+	router.GET("/health", handlers.HealthCheck)
+	
 	api := router.Group("/api")
 	{
 		// Restaurant routes

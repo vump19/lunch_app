@@ -3,6 +3,26 @@ import axios from "axios";
 // API 기본 URL 설정
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
 console.log('🌐 API Base URL:', API_BASE_URL);
+
+// 헬스체크 API
+export const healthCheck = async () => {
+  try {
+    const url = `${API_BASE_URL}/health`;
+    const response = await axios.get(url, { timeout: 5000 });
+    return { 
+      status: 'healthy', 
+      data: response.data,
+      timestamp: new Date()
+    };
+  } catch (error) {
+    console.error('헬스체크 실패:', error);
+    return { 
+      status: 'unhealthy', 
+      error: axios.isAxiosError(error) ? error.message : '알 수 없는 오류',
+      timestamp: new Date()
+    };
+  }
+};
 export const fetchRestaurants = async () => {
   try {
     const url = `${API_BASE_URL}/api/restaurants/`;

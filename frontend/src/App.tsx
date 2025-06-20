@@ -8,6 +8,7 @@ import KakaoMap from './components/KakaoMap';
 import MyRestaurantsTab from './components/MyRestaurantsTab';
 import VisitsTab from './components/VisitsTab';
 import PopupModal from './components/PopupModal';
+import HealthIndicator from './components/HealthIndicator';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
@@ -118,6 +119,9 @@ const App: React.FC = () => {
         message={modalMessage}
         onClose={() => setModalOpen(false)}
       />
+      
+      {/* 헬스 인디케이터 */}
+      <HealthIndicator />
     </div>
   );
 };
