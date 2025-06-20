@@ -186,13 +186,20 @@ Render.com을 사용하면 AWS보다 간단하고 무료로 애플리케이션�
 2. "Static Site" 선택
 3. GitHub 저장소 연결
 4. 빌드 설정:
-   - Build Command: `cd frontend && npm install && npm run build`
+   - Build Command: `npm run build` 또는 `./render-build.sh`
    - Publish Directory: `frontend/build`
+   - Root Directory: (비워두기)
 5. 환경 변수 설정:
    ```
    REACT_APP_API_BASE_URL=https://your-backend-url.onrender.com
    REACT_APP_KAKAO_MAP_APP_KEY=your_kakao_map_api_key
+   NODE_VERSION=18
    ```
+
+#### 🔧 배포 문제 해결 가이드
+- **빌드 실패 시**: 루트 디렉토리 `package.json`과 `render-build.sh` 스크립트 사용
+- **ESLint 경고**: 이미 수정 완료 (빌드 성공)
+- **서브모듈 문제**: 자동화된 빌드 스크립트로 해결
 
 ### 3. 백엔드 배포 (Web Service)
 1. Render 대시보드에서 "New +" 클릭
@@ -220,3 +227,25 @@ Render.com을 사용하면 AWS보다 간단하고 무료로 애플리케이션�
 - **빌드 실패 시**: Render.com 로그에서 오류 확인
 - **API 연결 실패 시**: 환경변수 `REACT_APP_API_BASE_URL` 확인
 - **지도 로딩 실패 시**: `REACT_APP_KAKAO_MAP_APP_KEY` 확인
+
+### 6. 최근 수정사항 (2024-06-20)
+- ✅ **지도 검색 결과 클릭 네비게이션 문제 수정**
+  - 첫 번째 클릭 시 바로 해당 위치로 이동
+  - 내 위치 표시 대신 검색 결과 위치로 정확한 이동
+  - 이벤트 처리 최적화로 중복 클릭 방지
+- ✅ **Render.com 배포 오류 수정**
+  - ESLint 경고 완전 제거 (빌드 성공)
+  - 배포용 빌드 스크립트 추가 (`render-build.sh`)
+  - 서브모듈 처리 최적화
+
+### 7. 프로젝트 파일 구조
+```
+lunch_app/
+├── frontend/              # React 프론트엔드
+├── backend/              # Go 백엔드
+├── package.json          # 루트 빌드 설정
+├── render-build.sh       # Render.com 배포 스크립트
+├── render.yaml          # Render.com 서비스 구성
+├── CLAUDE.md            # 개발 가이드라인
+└── README.md            # 프로젝트 문서
+```
