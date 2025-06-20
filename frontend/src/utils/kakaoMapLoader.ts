@@ -35,6 +35,7 @@ export const loadKakaoMapScript = (): Promise<void> => {
     const script = document.createElement('script');
     script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${appKey}&autoload=false&libraries=services`;
     script.async = true;
+    script.crossOrigin = 'anonymous';
 
     script.onload = () => {
       window.kakao.maps.load(() => {
@@ -49,7 +50,9 @@ export const loadKakaoMapScript = (): Promise<void> => {
       scriptLoadPromise = null;
       console.error('카카오맵 스크립트 로드 오류:', error);
       console.error('스크립트 URL:', script.src);
-      reject(new Error('카카오맵 스크립트 로드 실패. 네트워크 연결이나 API 키를 확인하세요.'));
+      console.error('현재 도메인:', window.location.origin);
+      console.error('도메인이 카카오 개발자 콘솔에 등록되어 있는지 확인하세요: https://developers.kakao.com');
+      reject(new Error('카카오맵 스크립트 로드 실패. 도메인 등록 또는 API 키를 확인하세요.'));
     };
 
     document.head.appendChild(script);

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { loadKakaoMapScript } from "../utils/kakaoMapLoader";
 import PopupModal from "./PopupModal";
+import MapErrorFallback from "./MapErrorFallback";
 
 declare global {
   interface Window {
@@ -24,6 +25,7 @@ const KakaoMap: React.FC<{ onAddRestaurant?: (place: any) => void }> = ({ onAddR
   const [isSearching, setIsSearching] = useState(false); // 검색 중 상태
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 오픈 상태
   const [modalMessage, setModalMessage] = useState(""); // 모달 메시지
+  const [mapError, setMapError] = useState<string | null>(null); // 지도 오류 상태
 
   // [주석] markers 상태가 변경될 때마다 ref 업데이트
   useEffect(() => {
@@ -65,7 +67,7 @@ const KakaoMap: React.FC<{ onAddRestaurant?: (place: any) => void }> = ({ onAddR
         });
       } catch (error) {
         console.error('지도 초기화 실패:', error);
-        alert('지도 초기화에 실패했습니다. 페이지를 새로고침해주세요.');
+        setMapError(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
       }
     };
     initializeMap();
