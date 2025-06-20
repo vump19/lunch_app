@@ -38,16 +38,25 @@ npm install
 
 # 빌드 실행
 echo "Building application..."
-npm run build
+if npm run build; then
+    echo "React build completed successfully!"
+else
+    echo "ERROR: React build failed!"
+    exit 1
+fi
 
 # 빌드 결과 확인
-if [ -d "build" ]; then
-    echo "Build completed successfully! Contents of build directory:"
+if [ -d "build" ] && [ -f "build/index.html" ]; then
+    echo "Build verification successful! Contents of build directory:"
     ls -la build/
     echo "Build size:"
     du -sh build/
+    echo "Checking for critical files:"
+    ls -la build/index.html build/static/ 2>/dev/null || echo "WARNING: Some expected files missing"
 else
-    echo "ERROR: Build directory not created!"
+    echo "ERROR: Build directory or index.html not created!"
+    echo "Current build directory contents:"
+    ls -la build/ 2>/dev/null || echo "Build directory does not exist"
     exit 1
 fi
 
