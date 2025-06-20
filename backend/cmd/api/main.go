@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"lunch_app/backend/internal/database"
 	"lunch_app/backend/internal/models"
 	"lunch_app/backend/internal/routes"
@@ -53,16 +54,23 @@ func insertTestData(db *gorm.DB) {
 	var count int64
 	db.Model(&models.Restaurant{}).Count(&count)
 	if count > 0 {
+		fmt.Printf("📊 기존 맛집 데이터 %d개 발견, 테스트 데이터 삽입 건너뜀\n", count)
 		return
 	}
 
+	fmt.Println("🍽️ 테스트 맛집 데이터 삽입 중...")
 	restaurants := []models.Restaurant{
 		{Name: "고향집", Address: "서울시 강남구", Phone: "02-123-4567", Category: "한식", Latitude: 37.4979, Longitude: 127.0276},
 		{Name: "차이나오", Address: "서울시 서초구", Phone: "02-987-6543", Category: "중식", Latitude: 37.4836, Longitude: 127.0325},
 		{Name: "스시하나", Address: "서울시 종로구", Phone: "02-456-7890", Category: "일식", Latitude: 37.5729, Longitude: 126.9794},
 	}
 
-	for _, r := range restaurants {
-		db.Create(&r)
+	for _, restaurant := range restaurants {
+		if err := db.Create(&restaurant).Error; err != nil {
+			fmt.Printf("❌ 테스트 데이터 삽입 실패: %v\n", err)
+		} else {
+			fmt.Printf("✅ %s 맛집 데이터 삽입 완료\n", restaurant.Name)
+		}
 	}
+	fmt.Println("🎉 테스트 데이터 삽입 완료!")
 }
