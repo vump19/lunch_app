@@ -2,13 +2,9 @@
   "name": "lunch-app",
   "version": "1.0.0",
   "scripts": {
-    "build": "cd frontend && npm ci && npm run build",
-    "build:frontend": "cd frontend && npm ci && npm run build",
-    "start": "cd frontend && npm start"
-  },
-  "devDependencies": {
-    "@types/react": "^19.1.7",
-    "@types/react-dom": "^19.1.6"
+    "build": "npm install --prefix frontend && npm run build --prefix frontend",
+    "build:frontend": "npm install --prefix frontend && npm run build --prefix frontend",
+    "start": "npm start --prefix frontend"
   },
   "engines": {
     "node": ">=16.0.0",
