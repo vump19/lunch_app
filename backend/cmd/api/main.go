@@ -4,6 +4,7 @@ import (
 	"lunch_app/backend/internal/database"
 	"lunch_app/backend/internal/models"
 	"lunch_app/backend/internal/routes"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -25,7 +26,15 @@ func main() {
 
 	r := gin.Default()
 
-	r.Use(cors.Default())
+	// CORS 설정 - 프론트엔드 도메인 허용
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"https://lunch-app-spd2.onrender.com", "http://localhost:3000"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:          12 * time.Hour,
+	}))
 
 	routes.Setup(r)
 
