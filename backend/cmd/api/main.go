@@ -4,6 +4,7 @@ import (
 	"lunch_app/backend/internal/database"
 	"lunch_app/backend/internal/models"
 	"lunch_app/backend/internal/routes"
+	"os"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -38,7 +39,13 @@ func main() {
 
 	routes.Setup(r)
 
-	r.Run(":8080")
+	// Render.com에서는 PORT 환경변수로 포트를 제공
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // 로컬 개발환경 기본값
+	}
+	
+	r.Run(":" + port)
 }
 
 func insertTestData(db *gorm.DB) {

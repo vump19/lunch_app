@@ -1,9 +1,27 @@
 services:
+  # 백엔드 서비스
+  - type: web
+    name: lunch-app-backend
+    env: go
+    buildCommand: cd backend && go build -o main cmd/api/main.go
+    startCommand: cd backend && ./main
+    envVars:
+      - key: PORT
+        value: $PORT
+      - key: GIN_MODE
+        value: release
+    
+  # 프론트엔드 서비스  
   - type: web
     name: lunch-app-frontend
     env: static
     buildCommand: npm run build
     staticPublishPath: frontend/build
+    envVars:
+      - key: REACT_APP_API_BASE_URL
+        value: https://lunch-app-backend.onrender.com
+      - key: REACT_APP_KAKAO_MAP_APP_KEY
+        value: f14fd74d211205835ee080095e0a7e06
     routes:
       - type: rewrite
         source: /*
