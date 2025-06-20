@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "cd frontend && npm install && npm run build"
+    "build:frontend": "cd frontend && npm install && npm run build"
   },
   "devDependencies": {
     "@types/react": "^19.1.7",

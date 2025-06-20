@@ -186,7 +186,7 @@ Render.com을 사용하면 AWS보다 간단하고 무료로 애플리케이션�
 2. "Static Site" 선택
 3. GitHub 저장소 연결
 4. 빌드 설정:
-   - Build Command: `npm run build` (루트 package.json의 스크립트 사용)
+   - Build Command: `cd frontend && npm install && npm run build`
    - Publish Directory: `frontend/build`
 5. 환경 변수 설정:
    ```
