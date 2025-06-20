@@ -204,6 +204,11 @@ Render.com을 사용하면 AWS보다 간단하고 무료로 애플리케이션�
    - Build Command: `cd backend && go build -o main cmd/api/main.go`
    - Start Command: `./main`
    - Root Directory: `backend` (중요!)
+5. 환경 변수 설정 (선택사항):
+   ```
+   PORT=8080
+   GIN_MODE=release
+   ```
 
 ### 4. 배포 순서 및 주의사항
 1. **백엔드를 먼저 배포**하고 URL을 확인

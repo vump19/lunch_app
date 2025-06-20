@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"lunch_app/backend/internal/database"
 	"lunch_app/backend/internal/models"
 	"lunch_app/backend/internal/routes"
@@ -13,10 +12,8 @@ import (
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	// .env 파일 로드 (선택적 - 없어도 오류 발생하지 않음)
+	godotenv.Load()
 
 	// 데이터베이스 초기화 부분
 	database.Connect()
