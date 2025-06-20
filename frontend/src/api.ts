@@ -1,9 +1,13 @@
 import axios from "axios";
 
-// 상대 경로 사용 (프록시 설정이 있는 경우)
+// API 기본 URL 설정
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
+console.log('🌐 API Base URL:', API_BASE_URL);
 export const fetchRestaurants = async () => {
   try {
-    const res = await axios.get("/api/restaurants/");
+    const url = `${API_BASE_URL}/api/restaurants/`;
+    console.log('📡 Fetching restaurants from:', url);
+    const res = await axios.get(url);
     return res.data;
   } catch (error) {
     console.error("맛집 목록 조회 에러:", error);
