@@ -17,8 +17,12 @@ export const loadKakaoMapScript = (): Promise<void> => {
   isScriptLoading = true;
   scriptLoadPromise = new Promise<void>((resolve, reject) => {
     const appKey = process.env.REACT_APP_KAKAO_MAP_APP_KEY;
+    console.log('Kakao Maps API Key 확인:', appKey ? '설정됨' : '누락됨');
+    
     if (!appKey) {
-      reject(new Error('카카오맵 API 키가 설정되지 않았습니다.'));
+      const errorMsg = '카카오맵 API 키가 설정되지 않았습니다. Render.com 환경 변수 REACT_APP_KAKAO_MAP_APP_KEY를 확인하세요.';
+      console.error(errorMsg);
+      reject(new Error(errorMsg));
       return;
     }
 
@@ -40,10 +44,12 @@ export const loadKakaoMapScript = (): Promise<void> => {
       });
     };
 
-    script.onerror = () => {
+    script.onerror = (error) => {
       isScriptLoading = false;
       scriptLoadPromise = null;
-      reject(new Error('카카오맵 스크립트 로드 실패'));
+      console.error('카카오맵 스크립트 로드 오류:', error);
+      console.error('스크립트 URL:', script.src);
+      reject(new Error('카카오맵 스크립트 로드 실패. 네트워크 연결이나 API 키를 확인하세요.'));
     };
 
     document.head.appendChild(script);
