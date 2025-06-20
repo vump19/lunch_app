@@ -33,7 +33,9 @@ export const addRestaurant = async (place: any) => {
   }
   
   try {
-    const res = await axios.post("/api/restaurants/", body);
+    const url = `${API_BASE_URL}/api/restaurants/`;
+    console.log('📡 Adding restaurant to:', url);
+    const res = await axios.post(url, body);
     console.log("Response:", res.data);
     return res.data;
   } catch (error) {
@@ -48,7 +50,9 @@ export const addRestaurant = async (place: any) => {
 // 맛집 삭제 API 함수 수정
 export const deleteRestaurant = async (id: number) => {
   try {
-    const response = await axios.delete(`/api/restaurants/${id}/`);
+    const url = `${API_BASE_URL}/api/restaurants/${id}/`;
+    console.log('📡 Deleting restaurant from:', url);
+    const response = await axios.delete(url);
     return response.data;
   } catch (error) {
     console.error('Error deleting restaurant:', error);
@@ -62,8 +66,9 @@ export const deleteRestaurant = async (id: number) => {
 // 방문 기록 관련 API 함수 추가
 export const fetchVisits = async () => {
   try {
-    console.log("Fetching visits...");
-    const response = await axios.get("/api/visits/");
+    const url = `${API_BASE_URL}/api/visits/`;
+    console.log('📡 Fetching visits from:', url);
+    const response = await axios.get(url);
     console.log("Visits response:", response.data);
     return response.data;
   } catch (error) {
@@ -84,7 +89,9 @@ export const addVisit = async (restaurantId: number) => {
     
     console.log("Sending visit request:", body);
     
-    const response = await axios.post("/api/visits/", body);
+    const url = `${API_BASE_URL}/api/visits/`;
+    console.log('📡 Adding visit to:', url);
+    const response = await axios.post(url, body);
     console.log("Visit response:", response.data);
     
     return response.data;
@@ -99,7 +106,9 @@ export const addVisit = async (restaurantId: number) => {
 
 export const deleteVisit = async (id: number) => {
   try {
-    const response = await axios.delete(`/api/visits/${id}/`);
+    const url = `${API_BASE_URL}/api/visits/${id}/`;
+    console.log('📡 Deleting visit from:', url);
+    const response = await axios.delete(url);
     return response.data;
   } catch (error) {
     console.error("Error deleting visit:", error);
