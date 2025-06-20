@@ -8,18 +8,26 @@ This is a location-based restaurant recommendation application with React/TypeSc
 
 ## Key Architecture
 
+### Project Structure (IMPORTANT)
+- **Frontend Integration**: Frontend is NOT a Git submodule - it's integrated directly into the main repository
+- **Repository Structure**: Single repository containing both frontend and backend code
+- **Deployment Compatibility**: This structure ensures compatibility with Render.com and other deployment platforms
+- **Version Control**: All frontend changes are tracked in the main repository's Git history
+
 ### Frontend Architecture (React + TypeScript)
 - **Main App Structure**: Tab-based navigation with 4 main sections (Recommend, Map, My Restaurants, Visit History)
 - **State Management**: React Query for server state, local useState for UI state
 - **Component Structure**: Main tabs are separate components, shared UI components in `/components`
 - **External APIs**: Kakao Maps API for location services and map display
 - **Styling**: Tailwind CSS with custom design system
+- **Location**: `/frontend` directory in main repository (NOT a submodule)
 
 ### Backend Architecture (Go + Gin + GORM)
 - **Database**: SQLite with auto-migration (no manual DB setup required)
 - **Models**: Restaurant and Visit entities with soft deletes
 - **API Structure**: RESTful endpoints under `/api` prefix
 - **Key Business Logic**: Visit records are preserved even when restaurants are deleted (shows as "deleted restaurant")
+- **Location**: `/backend` directory in main repository
 
 ### Data Flow
 - Frontend uses React Query to fetch/cache API data
@@ -134,3 +142,36 @@ DB_NAME=lunch_app
 - Test data is inserted on first run if database is empty
 - No manual database setup required for development
 - GORM handles all migrations automatically
+
+## CRITICAL DEVELOPMENT POLICIES
+
+### ⚠️ Frontend Repository Structure (NEVER CHANGE)
+**IMPORTANT**: The frontend directory is integrated directly into the main repository and must NEVER be converted to a Git submodule.
+
+#### Why No Submodules:
+1. **Deployment Issues**: Render.com and many deployment platforms don't properly handle Git submodules
+2. **Build Failures**: Submodules cause empty directory issues during deployment builds
+3. **Complexity**: Submodules add unnecessary complexity for a monorepo structure
+4. **Version Control**: Direct integration provides better change tracking and history
+
+#### Current Structure (MAINTAIN THIS):
+```
+lunch_app/
+├── frontend/           # React app - directly tracked in main repo
+├── backend/           # Go app - directly tracked in main repo
+├── package.json       # Root build configuration
+├── render-build.sh    # Deployment script
+└── README.md         # Documentation
+```
+
+#### If Frontend Changes Are Needed:
+1. Work directly in `/frontend` directory
+2. Commit changes to main repository
+3. NEVER run `git submodule add` or similar commands
+4. NEVER create separate `.git` directory in frontend
+
+#### Historical Context:
+- Previously frontend was a submodule, causing deployment failures
+- Converted to direct integration on 2024-06-20
+- This resolved all Render.com deployment issues
+- All future development must maintain this structure
