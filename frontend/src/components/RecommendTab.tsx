@@ -72,6 +72,8 @@ const RecommendTab: React.FC = () => {
   // const queryClient = useQueryClient();
   const [markers, setMarkers] = useState<any[]>([]);  // 마커 배열 상태 추가
   const [infowindows, setInfowindows] = useState<any[]>([]);  // 인포윈도우 배열 상태 추가
+  const [directionsService, setDirectionsService] = useState<any>(null);  // 길찾기 서비스 상태 추가
+  const [directionsRenderer, setDirectionsRenderer] = useState<any>(null);  // 길찾기 렌더러 상태 추가
   
   // [주석] 맛집 데이터 가져오기 (React Query)
   const { data: restaurants, isLoading } = useQuery({
@@ -118,6 +120,9 @@ const RecommendTab: React.FC = () => {
         const places = new window.kakao.maps.services.Places();
         setSearchService(places);
         setIsSearchServiceLoaded(true);
+        
+        // [주석] 길찾기 서비스 초기화 (카카오맵에서는 외부 API 사용)
+        // 카카오맵 자체 길찾기 기능 대신 Polyline을 사용한 직선 경로 표시
       } catch (error) {
         console.error("지도 초기화 실패:", error);
         alert("지도 초기화에 실패했습니다. 페이지를 새로고침해주세요.");
@@ -149,11 +154,221 @@ const RecommendTab: React.FC = () => {
 
   // 마커와 인포윈도우를 모두 제거하는 함수
   const clearMarkers = useCallback(() => {
-    markers.forEach(marker => marker.setMap(null));
-    infowindows.forEach(infowindow => infowindow.close());
-    setMarkers([]);
-    setInfowindows([]);
-  }, [markers, infowindows]);
+    setMarkers(prevMarkers => {
+      prevMarkers.forEach(marker => marker.setMap(null));
+      return [];
+    });
+    setInfowindows(prevInfowindows => {
+      prevInfowindows.forEach(infowindow => infowindow.close());
+      return [];
+    });
+    
+    // 기존 경로 제거
+    if (directionsRenderer) {
+      directionsRenderer.setMap(null);
+    }
+  }, [directionsRenderer]);
+
+  // OSRM API를 사용한 길찾기 함수 (무료)
+  const getRouteFromOSRM = async (
+    startLat: number, 
+    startLng: number, 
+    endLat: number, 
+    endLng: number, 
+    travelMode: 'WALKING' | 'DRIVING'
+  ) => {
+    try {
+      const profile = travelMode === 'WALKING' ? 'foot' : 'driving';
+      const apiUrl = `https://router.project-osrm.org/route/v1/${profile}/${startLng},${startLat};${endLng},${endLat}?overview=full&geometries=geojson`;
+      
+      const response = await fetch(apiUrl);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('OSRM API 호출 실패:', error);
+      return null;
+    }
+  };
+
+  // 카카오맵 길찾기 페이지를 새 창에서 열기
+  const openKakaoNavigation = (travelMode: 'WALKING' | 'DRIVING') => {
+    if (!currentLocation || !recommendedRestaurant) return;
+    
+    const { lat: startLat, lng: startLng } = currentLocation;
+    const { Latitude: endLat, Longitude: endLng } = recommendedRestaurant;
+    
+    // 카카오맵 길찾기 URL
+    const kakaoMapUrl = `https://map.kakao.com/link/to/${encodeURIComponent(recommendedRestaurant.Name)},${endLat},${endLng}/from/현재위치,${startLat},${startLng}`;
+    
+    window.open(kakaoMapUrl, '_blank');
+  };
+
+  // 경로 표시 함수
+  const showRoute = useCallback(async (travelMode: 'WALKING' | 'DRIVING') => {
+    if (!currentLocation || !recommendedRestaurant || !map) {
+      console.error("경로를 표시할 수 없습니다:", { currentLocation, recommendedRestaurant, map });
+      return;
+    }
+
+    // 기존 마커와 경로 모두 제거
+    setMarkers(prevMarkers => {
+      prevMarkers.forEach(marker => marker.setMap(null));
+      return [];
+    });
+    setInfowindows(prevInfowindows => {
+      prevInfowindows.forEach(infowindow => infowindow.close());
+      return [];
+    });
+    if (directionsRenderer) {
+      directionsRenderer.setMap(null);
+    }
+
+    // 출발지와 목적지 좌표
+    const startLatLng = new window.kakao.maps.LatLng(currentLocation.lat, currentLocation.lng);
+    const endLatLng = new window.kakao.maps.LatLng(recommendedRestaurant.Latitude, recommendedRestaurant.Longitude);
+
+    // OSRM API 호출하여 실제 도로 경로 가져오기
+    const routeData = await getRouteFromOSRM(
+      currentLocation.lat, 
+      currentLocation.lng, 
+      recommendedRestaurant.Latitude, 
+      recommendedRestaurant.Longitude, 
+      travelMode
+    );
+
+    let routePath: any[] = [];
+    let routeInfo = { distance: 0, duration: 0 };
+    
+    if (routeData && routeData.routes && routeData.routes.length > 0) {
+      // OSRM API에서 받은 실제 경로 좌표들을 사용
+      const route = routeData.routes[0];
+      const coordinates = route.geometry.coordinates;
+      
+      // OSRM은 [lng, lat] 형태로 반환하므로 변환
+      routePath = coordinates.map((coord: [number, number]) => 
+        new window.kakao.maps.LatLng(coord[1], coord[0])
+      );
+      
+      // 거리와 시간 정보 저장
+      routeInfo.distance = route.distance; // 미터
+      routeInfo.duration = route.duration; // 초
+    }
+    
+    // API 호출 실패시 직선 경로로 대체
+    if (routePath.length === 0) {
+      console.warn('OSRM API 실패, 직선 경로로 대체');
+      routePath = [startLatLng, endLatLng];
+    }
+
+    // 먼저 지도 범위 조정
+    const bounds = new window.kakao.maps.LatLngBounds();
+    routePath.forEach((point: any) => bounds.extend(point));
+    map.setBounds(bounds);
+
+    // 지도 움직임이 완료된 후 polyline 그리기
+    setTimeout(() => {
+      const polyline = new window.kakao.maps.Polyline({
+        path: routePath,
+        strokeWeight: 6,
+        strokeColor: travelMode === 'WALKING' ? '#FF6B6B' : '#4ECDC4',
+        strokeOpacity: 0.9,
+        strokeStyle: 'solid',
+        zIndex: 1000
+      });
+
+      // Polyline을 지도에 표시
+      polyline.setMap(map);
+      setDirectionsRenderer(polyline);
+    }, 100);
+
+    // 출발지 마커 (사용자 정의 이미지) - 한글 문제 해결을 위해 URL 인코딩 사용
+    const startSvg = `
+      <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="16" cy="16" r="12" fill="#FF6B6B" stroke="white" stroke-width="3"/>
+        <circle cx="16" cy="16" r="8" fill="white"/>
+        <text x="16" y="20" text-anchor="middle" fill="#FF6B6B" font-size="10" font-weight="bold">S</text>
+      </svg>
+    `;
+    
+    const startMarkerImage = new window.kakao.maps.MarkerImage(
+      'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(startSvg),
+      new window.kakao.maps.Size(32, 32),
+      { offset: new window.kakao.maps.Point(16, 16) }
+    );
+
+    const startMarker = new window.kakao.maps.Marker({
+      position: startLatLng,
+      map: map,
+      image: startMarkerImage,
+      zIndex: 2000
+    });
+
+    // 목적지 마커 (사용자 정의 이미지) - 한글 문제 해결을 위해 URL 인코딩 사용
+    const endSvg = `
+      <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="16" cy="16" r="12" fill="#4ECDC4" stroke="white" stroke-width="3"/>
+        <circle cx="16" cy="16" r="8" fill="white"/>
+        <text x="16" y="20" text-anchor="middle" fill="#4ECDC4" font-size="10" font-weight="bold">E</text>
+      </svg>
+    `;
+
+    const endMarkerImage = new window.kakao.maps.MarkerImage(
+      'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(endSvg),
+      new window.kakao.maps.Size(32, 32),
+      { offset: new window.kakao.maps.Point(16, 16) }
+    );
+
+    const endMarker = new window.kakao.maps.Marker({
+      position: endLatLng,
+      map: map,
+      image: endMarkerImage,
+      zIndex: 2000
+    });
+
+    // 마커들을 배열에 저장
+    const newMarkers = [startMarker, endMarker];
+    setMarkers(newMarkers);
+
+    // 인포윈도우 생성
+    const startInfowindow = new window.kakao.maps.InfoWindow({
+      content: `<div style="padding:8px;font-size:12px;color:#FF6B6B;font-weight:bold;text-align:center;">
+        📍 출발지 (Start)<br><span style="font-size:10px;color:#666;">현재 위치</span>
+      </div>`
+    });
+    
+    // 거리와 시간 정보 표시
+    let distanceText = '';
+    let timeText = '';
+    if (routeInfo.distance > 0) {
+      const distance = Math.round(routeInfo.distance / 1000 * 10) / 10; // km
+      const duration = Math.round(routeInfo.duration / 60); // 분
+      distanceText = distance < 1 ? `${Math.round(routeInfo.distance)}m` : `${distance}km`;
+      timeText = `${duration}분`;
+    } else {
+      const time = travelMode === 'WALKING' ? travelTime?.walking : travelTime?.driving;
+      timeText = `약 ${time}분`;
+    }
+    
+    const endInfowindow = new window.kakao.maps.InfoWindow({
+      content: `<div style="padding:8px;font-size:12px;color:#4ECDC4;font-weight:bold;text-align:center;">
+        🎯 목적지 (End)<br>
+        <div style="font-size:11px;color:#333;margin:2px 0;">${recommendedRestaurant.Name}</div>
+        <span style="font-size:10px;color:#666;">${distanceText} · ${timeText}</span>
+      </div>`
+    });
+
+    // 인포윈도우 열기
+    startInfowindow.open(map, startMarker);
+    endInfowindow.open(map, endMarker);
+    
+    const newInfowindows = [startInfowindow, endInfowindow];
+    setInfowindows(newInfowindows);
+  }, [currentLocation, recommendedRestaurant, map, directionsRenderer, travelTime]);
 
   // 위치 기반 추천 (카카오맵 검색 사용)
   const recommendByLocation = useCallback(() => {
@@ -172,7 +387,17 @@ const RecommendTab: React.FC = () => {
     setRecommendedRestaurant(null);
 
     // 기존 마커와 인포윈도우 제거
-    clearMarkers();
+    setMarkers(prevMarkers => {
+      prevMarkers.forEach(marker => marker.setMap(null));
+      return [];
+    });
+    setInfowindows(prevInfowindows => {
+      prevInfowindows.forEach(infowindow => infowindow.close());
+      return [];
+    });
+    if (directionsRenderer) {
+      directionsRenderer.setMap(null);
+    }
 
     const searchOptions = {
       location: new window.kakao.maps.LatLng(currentLocation.lat, currentLocation.lng),
@@ -272,14 +497,24 @@ const RecommendTab: React.FC = () => {
         alert("검색 결과가 없습니다.");
       }
     }, searchOptions);
-  }, [currentLocation, searchService, isSearchServiceLoaded, map, clearMarkers]);
+  }, [currentLocation, searchService, isSearchServiceLoaded, map]);
 
   // 컴포넌트 언마운트 시 마커와 인포윈도우 정리
   useEffect(() => {
     return () => {
-      clearMarkers();
+      setMarkers(prevMarkers => {
+        prevMarkers.forEach(marker => marker.setMap(null));
+        return [];
+      });
+      setInfowindows(prevInfowindows => {
+        prevInfowindows.forEach(infowindow => infowindow.close());
+        return [];
+      });
+      if (directionsRenderer) {
+        directionsRenderer.setMap(null);
+      }
     };
-  }, [clearMarkers]);
+  }, [directionsRenderer]);
 
   // 내 맛집 중에서 추천
   const recommendFromMyList = () => {
@@ -291,6 +526,22 @@ const RecommendTab: React.FC = () => {
     if (!currentLocation) {
       alert("현재 위치를 가져올 수 없습니다. 위치 권한을 확인해주세요.");
       return;
+    }
+
+    // 주변 맛집 목록 초기화
+    setNearbyRestaurants([]);
+
+    // 기존 마커와 경로 모두 제거
+    setMarkers(prevMarkers => {
+      prevMarkers.forEach(marker => marker.setMap(null));
+      return [];
+    });
+    setInfowindows(prevInfowindows => {
+      prevInfowindows.forEach(infowindow => infowindow.close());
+      return [];
+    });
+    if (directionsRenderer) {
+      directionsRenderer.setMap(null);
     }
 
     const randomIndex = Math.floor(Math.random() * restaurants.length);
@@ -356,10 +607,6 @@ const RecommendTab: React.FC = () => {
   //   }
   // };
 
-  console.log('isLoading', isLoading);
-  console.log('currentLocation', currentLocation);
-  console.log('isMapLoaded', isMapLoaded);
-  console.log('isGeometryLoaded', isGeometryLoaded);
 
   return (
     <div className="space-y-4">
@@ -397,15 +644,59 @@ const RecommendTab: React.FC = () => {
           {/* 소요시간 정보 (내 맛집 추천일 때만 표시) */}
           {recommendType === "my" && travelTime && (
             <div className="bg-blue-50 rounded-lg p-3 mt-3">
-              <div className="font-medium text-blue-800 mb-1">예상 소요시간</div>
+              <div className="font-medium text-blue-800 mb-2">예상 소요시간</div>
               <div className="flex gap-4 text-sm">
-                <div className="flex items-center gap-1">
+                <button 
+                  onClick={() => showRoute('WALKING')}
+                  className="flex items-center gap-1 px-3 py-2 bg-blue-100 hover:bg-blue-200 rounded-lg transition-colors cursor-pointer"
+                >
                   <span className="text-blue-600">🚶‍♂️</span>
                   <span className="text-blue-700">도보 {travelTime.walking}분</span>
-                </div>
-                <div className="flex items-center gap-1">
+                </button>
+                <button 
+                  onClick={() => showRoute('DRIVING')}
+                  className="flex items-center gap-1 px-3 py-2 bg-blue-100 hover:bg-blue-200 rounded-lg transition-colors cursor-pointer"
+                >
                   <span className="text-blue-600">🚗</span>
                   <span className="text-blue-700">차량 {travelTime.driving}분</span>
+                </button>
+              </div>
+              <div className="mt-3">
+                <div className="text-xs text-blue-600 mb-2">
+                  * 클릭하면 지도에 실제 도로 경로가 표시됩니다
+                </div>
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => openKakaoNavigation('WALKING')}
+                    className="flex-1 text-xs px-3 py-2 bg-green-100 hover:bg-green-200 rounded text-green-700 transition-colors font-medium"
+                  >
+                    🗺️ 카카오맵에서 길찾기
+                  </button>
+                  <button 
+                    onClick={() => {
+                      // 마커와 경로 초기화
+                      setMarkers(prevMarkers => {
+                        prevMarkers.forEach(marker => marker.setMap(null));
+                        return [];
+                      });
+                      setInfowindows(prevInfowindows => {
+                        prevInfowindows.forEach(infowindow => infowindow.close());
+                        return [];
+                      });
+                      if (directionsRenderer) {
+                        directionsRenderer.setMap(null);
+                      }
+                      
+                      if (recommendedRestaurant && map) {
+                        const position = new window.kakao.maps.LatLng(recommendedRestaurant.Latitude, recommendedRestaurant.Longitude);
+                        map.setCenter(position);
+                        showMarkerWithInfo(position, recommendedRestaurant.Name);
+                      }
+                    }}
+                    className="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-gray-600 transition-colors"
+                  >
+                    경로 초기화
+                  </button>
                 </div>
               </div>
             </div>
