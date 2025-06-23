@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchRestaurants, deleteRestaurant, addVisit } from '../api';
 import { MapPinIcon, TrashIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import PopupModal from './PopupModal';
 
 const MyRestaurantsTab: React.FC = () => {
   const queryClient = useQueryClient();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [confirmModal, setConfirmModal] = useState<{
+    open: boolean;
+    message: string;
+    onConfirm: () => void;
+  }>({ open: false, message: '', onConfirm: () => {} });
+  
   const { data: restaurants, isLoading, error } = useQuery({
     queryKey: ['restaurants'],
     queryFn: fetchRestaurants,
@@ -12,30 +21,44 @@ const MyRestaurantsTab: React.FC = () => {
     retryDelay: 1000,
   });
 
-  const handleDelete = async (id: number, name: string) => {
-    if (!window.confirm(`'${name}'을(를) 삭제하시겠습니까?`)) return;
-    
-    try {
-      await deleteRestaurant(id);
-      queryClient.invalidateQueries(['restaurants']);
-      alert('맛집이 삭제되었습니다.');
-    } catch (error) {
-      console.error('삭제 에러:', error);
-      alert('삭제에 실패했습니다.');
-    }
+  const handleDelete = (id: number, name: string) => {
+    setConfirmModal({
+      open: true,
+      message: `'${name}'을(를) 삭제하시겠습니까?`,
+      onConfirm: async () => {
+        try {
+          await deleteRestaurant(id);
+          queryClient.invalidateQueries(['restaurants']);
+          setModalMessage('맛집이 삭제되었습니다.');
+          setModalOpen(true);
+        } catch (error) {
+          console.error('삭제 에러:', error);
+          setModalMessage('삭제에 실패했습니다.');
+          setModalOpen(true);
+        }
+        setConfirmModal({ open: false, message: '', onConfirm: () => {} });
+      }
+    });
   };
 
-  const handleVisit = async (id: number, name: string) => {
-    if (!window.confirm(`'${name}'을(를) 방문 처리하시겠습니까?`)) return;
-    
-    try {
-      await addVisit(id);
-      queryClient.invalidateQueries(['visits']);
-      alert('방문 기록이 추가되었습니다!');
-    } catch (error) {
-      console.error('방문 기록 추가 에러:', error);
-      alert('방문 기록 추가에 실패했습니다.');
-    }
+  const handleVisit = (id: number, name: string) => {
+    setConfirmModal({
+      open: true,
+      message: `'${name}'을(를) 방문 처리하시겠습니까?`,
+      onConfirm: async () => {
+        try {
+          await addVisit(id);
+          queryClient.invalidateQueries(['visits']);
+          setModalMessage('방문 기록이 추가되었습니다!');
+          setModalOpen(true);
+        } catch (error) {
+          console.error('방문 기록 추가 에러:', error);
+          setModalMessage('방문 기록 추가에 실패했습니다.');
+          setModalOpen(true);
+        }
+        setConfirmModal({ open: false, message: '', onConfirm: () => {} });
+      }
+    });
   };
 
   if (isLoading) return (
@@ -87,11 +110,13 @@ const MyRestaurantsTab: React.FC = () => {
                     map.setCenter(pos);
                     window.open(`https://map.kakao.com/link/map/${r.Name},${r.Latitude},${r.Longitude}`, '_blank');
                   } else {
-                    alert('카카오맵이 로드되지 않았습니다.');
+                    setModalMessage('카카오맵이 로드되지 않았습니다.');
+                    setModalOpen(true);
                   }
                 } catch (error) {
                   console.error('지도 열기 에러:', error);
-                  alert('지도를 열 수 없습니다.');
+                  setModalMessage('지도를 열 수 없습니다.');
+                  setModalOpen(true);
                 }
               }}
             >
@@ -112,6 +137,21 @@ const MyRestaurantsTab: React.FC = () => {
           </div>
         </div>
       ))}
+      
+      {/* 결과 메시지 모달 */}
+      <PopupModal
+        open={modalOpen}
+        message={modalMessage}
+        onClose={() => setModalOpen(false)}
+      />
+      
+      {/* 확인 모달 */}
+      <PopupModal
+        open={confirmModal.open}
+        message={confirmModal.message}
+        onClose={() => setConfirmModal({ open: false, message: '', onConfirm: () => {} })}
+        onConfirm={confirmModal.onConfirm}
+      />
     </div>
   );
 };

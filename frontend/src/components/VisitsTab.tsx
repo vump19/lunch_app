@@ -1,26 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchVisits, deleteVisit } from '../api';
 import { TrashIcon, CalendarDaysIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import PopupModal from './PopupModal';
 
 const VisitsTab: React.FC = () => {
   const queryClient = useQueryClient();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [confirmModal, setConfirmModal] = useState<{
+    open: boolean;
+    message: string;
+    onConfirm: () => void;
+  }>({ open: false, message: '', onConfirm: () => {} });
+  
   const { data: visits, isLoading, error } = useQuery({
     queryKey: ['visits'],
     queryFn: fetchVisits,
   });
 
-  const handleDelete = async (id: number) => {
-    if (!window.confirm('방문 기록을 삭제하시겠습니까?')) return;
-    
-    try {
-      await deleteVisit(id);
-      queryClient.invalidateQueries(['visits']);
-      alert('방문 기록이 삭제되었습니다.');
-    } catch (error) {
-      console.error('방문 기록 삭제 에러:', error);
-      alert('방문 기록 삭제에 실패했습니다.');
-    }
+
+  const handleDelete = (id: number) => {
+    setConfirmModal({
+      open: true,
+      message: '방문 기록을 삭제하시겠습니까?',
+      onConfirm: async () => {
+        try {
+          await deleteVisit(id);
+          queryClient.invalidateQueries(['visits']);
+          setModalMessage('방문 기록이 삭제되었습니다.');
+          setModalOpen(true);
+        } catch (error) {
+          console.error('방문 기록 삭제 에러:', error);
+          setModalMessage('방문 기록 삭제에 실패했습니다.');
+          setModalOpen(true);
+        }
+        setConfirmModal({ open: false, message: '', onConfirm: () => {} });
+      }
+    });
   };
 
   if (isLoading) return (
@@ -79,6 +96,21 @@ const VisitsTab: React.FC = () => {
           </button>
         </div>
       ))}
+      
+      {/* 결과 메시지 모달 */}
+      <PopupModal
+        open={modalOpen}
+        message={modalMessage}
+        onClose={() => setModalOpen(false)}
+      />
+      
+      {/* 확인 모달 */}
+      <PopupModal
+        open={confirmModal.open}
+        message={confirmModal.message}
+        onClose={() => setConfirmModal({ open: false, message: '', onConfirm: () => {} })}
+        onConfirm={confirmModal.onConfirm}
+      />
     </div>
   );
 };

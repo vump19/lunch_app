@@ -1,7 +1,7 @@
 import React from 'react';
 import { useHealthCheck } from '../hooks/useHealthCheck';
 
-const HealthIndicator: React.FC = () => {
+const HealthIndicator = (): JSX.Element => {
   const { healthStatus, performHealthCheck } = useHealthCheck();
 
   const getStatusColor = () => {

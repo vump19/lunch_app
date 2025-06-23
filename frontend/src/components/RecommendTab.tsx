@@ -41,6 +41,19 @@ function getDistanceFromLatLonInMeters(lat1: number, lon1: number, lat2: number,
   return R * c;
 }
 
+// 거리 기반 예상 소요시간 계산 함수
+function calculateTravelTime(distanceInMeters: number) {
+  // 도보: 평균 시속 4km/h (67m/min)
+  const walkingMinutes = Math.round(distanceInMeters / 67);
+  // 차량: 평균 시속 25km/h (417m/min) - 도심 기준
+  const drivingMinutes = Math.round(distanceInMeters / 417);
+  
+  return {
+    walking: Math.max(1, walkingMinutes), // 최소 1분
+    driving: Math.max(1, drivingMinutes)  // 최소 1분
+  };
+}
+
 const RecommendTab: React.FC = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<any>(null);
@@ -48,6 +61,7 @@ const RecommendTab: React.FC = () => {
   const [infowindow, setInfowindow] = useState<any>(null);  // 인포윈도우 상태 추가
   const [recommendType, setRecommendType] = useState<"my" | "location" | null>(null);
   const [recommendedRestaurant, setRecommendedRestaurant] = useState<Restaurant | null>(null);
+  const [travelTime, setTravelTime] = useState<{walking: number, driving: number} | null>(null);
   const [currentLocation, setCurrentLocation] = useState<{lat: number; lng: number} | null>(null);
   const [nearbyRestaurants, setNearbyRestaurants] = useState<NearbyRestaurant[]>([]);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
@@ -152,6 +166,11 @@ const RecommendTab: React.FC = () => {
       return;
     }
 
+    // 추천 유형 변경 시 소요시간 정보 초기화
+    setTravelTime(null);
+    setRecommendType("location");
+    setRecommendedRestaurant(null);
+
     // 기존 마커와 인포윈도우 제거
     clearMarkers();
 
@@ -183,13 +202,20 @@ const RecommendTab: React.FC = () => {
           };
         });
 
-        setNearbyRestaurants(restaurantsWithDistance);
+        // 배열을 랜덤하게 섞기 (Fisher-Yates shuffle)
+        const shuffledRestaurants = [...restaurantsWithDistance];
+        for (let i = shuffledRestaurants.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledRestaurants[i], shuffledRestaurants[j]] = [shuffledRestaurants[j], shuffledRestaurants[i]];
+        }
 
-        // 검색 결과를 지도에 표시
+        setNearbyRestaurants(shuffledRestaurants);
+
+        // 검색 결과를 지도에 표시 (랜덤 순서 적용)
         const newMarkers: any[] = [];
         const newInfowindows: any[] = [];
 
-        restaurantsWithDistance.forEach((place) => {
+        shuffledRestaurants.forEach((place) => {
           const position = new window.kakao.maps.LatLng(place.Latitude, place.Longitude);
           
           // 마커 생성
@@ -235,9 +261,9 @@ const RecommendTab: React.FC = () => {
         });
 
         // 검색 결과가 있는 경우 지도 중심 이동
-        if (restaurantsWithDistance.length > 0) {
+        if (shuffledRestaurants.length > 0) {
           const bounds = new window.kakao.maps.LatLngBounds();
-          restaurantsWithDistance.forEach(place => {
+          shuffledRestaurants.forEach(place => {
             bounds.extend(new window.kakao.maps.LatLng(place.Latitude, place.Longitude));
           });
           map.setBounds(bounds);
@@ -262,11 +288,27 @@ const RecommendTab: React.FC = () => {
       return;
     }
 
+    if (!currentLocation) {
+      alert("현재 위치를 가져올 수 없습니다. 위치 권한을 확인해주세요.");
+      return;
+    }
+
     const randomIndex = Math.floor(Math.random() * restaurants.length);
     const selected = restaurants[randomIndex];
     
+    // 거리와 소요시간 계산
+    const distance = getDistanceFromLatLonInMeters(
+      currentLocation.lat,
+      currentLocation.lng,
+      selected.Latitude,
+      selected.Longitude
+    );
+    
+    const calculatedTravelTime = calculateTravelTime(distance);
+    
     setRecommendedRestaurant(selected);
     setRecommendType("my");
+    setTravelTime(calculatedTravelTime);
     
     if (map && window.kakao && window.kakao.maps) {
       const position = new window.kakao.maps.LatLng(selected.Latitude, selected.Longitude);
@@ -346,11 +388,28 @@ const RecommendTab: React.FC = () => {
           <div className="text-xl font-bold mb-1">
             {recommendedRestaurant.Name}
           </div>
-          <div className="text-sm text-gray-600 mb-4">
+          <div className="text-sm text-gray-600 mb-2">
             {recommendedRestaurant.Address}
             <br />
             {recommendedRestaurant.Category} | {recommendedRestaurant.Phone}
           </div>
+          
+          {/* 소요시간 정보 (내 맛집 추천일 때만 표시) */}
+          {recommendType === "my" && travelTime && (
+            <div className="bg-blue-50 rounded-lg p-3 mt-3">
+              <div className="font-medium text-blue-800 mb-1">예상 소요시간</div>
+              <div className="flex gap-4 text-sm">
+                <div className="flex items-center gap-1">
+                  <span className="text-blue-600">🚶‍♂️</span>
+                  <span className="text-blue-700">도보 {travelTime.walking}분</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-blue-600">🚗</span>
+                  <span className="text-blue-700">차량 {travelTime.driving}분</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
