@@ -2,72 +2,107 @@
 
 ## 전체 시스템 아키텍처
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        Client Layer                             │
-├─────────────────────────────────────────────────────────────────┤
-│  React Frontend (TypeScript)                                   │
-│  ├── Components (UI)                                           │
-│  ├── Hooks (Business Logic)                                    │
-│  ├── API Layer (HTTP Client)                                   │
-│  └── State Management (React Query)                            │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-                           HTTP/HTTPS
-                                │
-┌─────────────────────────────────────────────────────────────────┐
-│                     External APIs                              │
-├─────────────────────────────────────────────────────────────────┤
-│  Kakao Maps API                                                 │
-│  ├── Map Display                                               │
-│  ├── Place Search                                              │
-│  └── Geolocation Services                                      │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-                           HTTP/HTTPS
-                                │
-┌─────────────────────────────────────────────────────────────────┐
-│                     Backend Layer                              │
-├─────────────────────────────────────────────────────────────────┤
-│  Go Server (Gin Framework)                                     │
-│  ├── API Routes (/api/*, /health)                              │
-│  ├── Handlers (Business Logic)                                 │
-│  ├── Models (Data Structures)                                  │
-│  ├── Database Layer (GORM)                                     │
-│  └── Middleware (CORS, Logging)                                │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-                           Database Driver
-                                │
-┌─────────────────────────────────────────────────────────────────┐
-│                    Database Layer                              │
-├─────────────────────────────────────────────────────────────────┤
-│  Development: SQLite (lunch_app.db)                            │
-│  Production: PostgreSQL (Render.com)                           │
-│  ├── Restaurant Table                                          │
-│  ├── Visit Table                                               │
-│  └── Auto Migration                                            │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    subgraph "Client Layer"
+        A[React Frontend<br/>TypeScript]
+        A1[Components<br/>UI]
+        A2[Hooks<br/>Business Logic]
+        A3[API Layer<br/>HTTP Client]
+        A4[State Management<br/>React Query]
+        
+        A --> A1
+        A --> A2
+        A --> A3
+        A --> A4
+    end
+    
+    subgraph "External APIs"
+        B[Kakao Maps API]
+        B1[Map Display]
+        B2[Place Search]
+        B3[Geolocation Services]
+        
+        B --> B1
+        B --> B2
+        B --> B3
+    end
+    
+    subgraph "Backend Layer"
+        C[Go Server<br/>Gin Framework]
+        C1[API Routes<br/>/api/*, /health]
+        C2[Handlers<br/>Business Logic]
+        C3[Models<br/>Data Structures]
+        C4[Database Layer<br/>GORM]
+        C5[Middleware<br/>CORS, Logging]
+        
+        C --> C1
+        C --> C2
+        C --> C3
+        C --> C4
+        C --> C5
+    end
+    
+    subgraph "Database Layer"
+        D[Database]
+        D1[Development<br/>SQLite]
+        D2[Production<br/>PostgreSQL]
+        D3[Restaurant Table]
+        D4[Visit Table]
+        D5[Auto Migration]
+        
+        D --> D1
+        D --> D2
+        D --> D3
+        D --> D4
+        D --> D5
+    end
+    
+    A3 -.->|HTTP/HTTPS| B
+    A3 -->|HTTP/HTTPS| C1
+    C4 -->|Database Driver| D
+    
+    style A fill:#e1f5fe
+    style B fill:#f3e5f5
+    style C fill:#e8f5e8
+    style D fill:#fff3e0
 ```
 
 ## 프론트엔드 아키텍처
 
 ### Component Architecture
-```
-src/
-├── App.tsx                     # 메인 애플리케이션 컴포넌트
-├── components/                 # UI 컴포넌트
-│   ├── RecommendTab.tsx       # 추천 탭 (지도, 추천 로직)
-│   ├── KakaoMap.tsx          # 카카오맵 통합 컴포넌트
-│   ├── MyRestaurantsTab.tsx  # 내 맛집 관리
-│   ├── VisitsTab.tsx         # 방문 기록 관리
-│   ├── PopupModal.tsx        # 통합 모달 시스템
-│   └── HealthIndicator.tsx   # 백엔드 헬스 모니터링
-├── hooks/                     # 커스텀 훅
-│   └── useHealthCheck.ts     # 헬스체크 로직
-├── utils/                     # 유틸리티
-│   └── kakaoMapLoader.ts     # 카카오맵 스크립트 로더
-└── api.ts                    # API 클라이언트
+
+```mermaid
+graph TD
+    A[App.tsx<br/>메인 애플리케이션] --> B[Components]
+    
+    B --> B1[RecommendTab.tsx<br/>추천 탭]
+    B --> B2[KakaoMap.tsx<br/>카카오맵 통합]
+    B --> B3[MyRestaurantsTab.tsx<br/>내 맛집 관리]
+    B --> B4[VisitsTab.tsx<br/>방문 기록 관리]
+    B --> B5[PopupModal.tsx<br/>통합 모달 시스템]
+    B --> B6[HealthIndicator.tsx<br/>헬스 모니터링]
+    
+    A --> C[Hooks]
+    C --> C1[useHealthCheck.ts<br/>헬스체크 로직]
+    
+    A --> D[Utils]
+    D --> D1[kakaoMapLoader.ts<br/>카카오맵 로더]
+    
+    A --> E[api.ts<br/>API 클라이언트]
+    
+    B1 --> B2
+    B3 --> B5
+    B4 --> B5
+    B6 --> C1
+    B1 --> D1
+    B2 --> D1
+    
+    style A fill:#ff9999
+    style B fill:#99ccff
+    style C fill:#99ff99
+    style D fill:#ffcc99
+    style E fill:#cc99ff
 ```
 
 ### State Management Architecture
@@ -89,57 +124,67 @@ src/
 ```
 
 ### Data Flow
-```
-User Interaction
-        │
-        ▼
-UI Component
-        │
-        ▼
-Event Handler
-        │
-        ▼
-API Call (api.ts)
-        │
-        ▼
-React Query
-        │
-        ▼
-HTTP Request
-        │
-        ▼
-Backend API
-        │
-        ▼
-Database
-        │
-        ▼
-Response Back to UI
-        │
-        ▼
-State Update & Re-render
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant UI as UI Component
+    participant EH as Event Handler
+    participant API as API Layer
+    participant RQ as React Query
+    participant BE as Backend API
+    participant DB as Database
+    
+    U->>UI: User Interaction
+    UI->>EH: Trigger Event
+    EH->>API: API Call (api.ts)
+    API->>RQ: Cache Check
+    RQ->>BE: HTTP Request
+    BE->>DB: Database Query
+    DB-->>BE: Query Result
+    BE-->>RQ: JSON Response
+    RQ-->>API: Cached Data
+    API-->>EH: Response Data
+    EH-->>UI: State Update
+    UI-->>U: Re-render UI
+    
+    Note over RQ,BE: 캐시된 데이터가 있으면<br/>네트워크 요청 생략
+    Note over UI,U: React Query가<br/>자동으로 UI 업데이트
 ```
 
 ## 백엔드 아키텍처
 
 ### Layered Architecture
-```
-cmd/api/main.go                 # 애플리케이션 엔트리포인트
-        │
-        ▼
-internal/
-├── routes/                     # 라우팅 계층
-│   └── routes.go              # API 경로 정의
-├── handlers/                   # 핸들러 계층 (컨트롤러)
-│   ├── restaurant_handler.go  # 맛집 CRUD 로직
-│   ├── visit_handler.go       # 방문기록 CRUD 로직
-│   └── health_handler.go      # 헬스체크 로직
-├── models/                     # 모델 계층 (도메인)
-│   ├── restaurant.go          # 맛집 모델
-│   ├── visit.go              # 방문기록 모델
-│   └── user.go               # 사용자 모델 (미래 확장용)
-└── database/                   # 데이터 액세스 계층
-    └── database.go            # DB 연결 및 설정
+
+```mermaid
+graph TD
+    A[main.go<br/>애플리케이션 엔트리포인트] --> B[internal/]
+    
+    B --> C[routes/<br/>라우팅 계층]
+    C --> C1[routes.go<br/>API 경로 정의]
+    
+    B --> D[handlers/<br/>핸들러 계층]
+    D --> D1[restaurant_handler.go<br/>맛집 CRUD 로직]
+    D --> D2[visit_handler.go<br/>방문기록 CRUD 로직]
+    D --> D3[health_handler.go<br/>헬스체크 로직]
+    
+    B --> E[models/<br/>모델 계층]
+    E --> E1[restaurant.go<br/>맛집 모델]
+    E --> E2[visit.go<br/>방문기록 모델]
+    E --> E3[user.go<br/>사용자 모델]
+    
+    B --> F[database/<br/>데이터 액세스]
+    F --> F1[database.go<br/>DB 연결 및 설정]
+    
+    C1 --> D
+    D --> E
+    D --> F
+    
+    style A fill:#ffcccc
+    style C fill:#ccffcc
+    style D fill:#ccccff
+    style E fill:#ffffcc
+    style F fill:#ffccff
 ```
 
 ### Request Flow
@@ -203,14 +248,49 @@ CREATE INDEX idx_visits_restaurant_id ON visits(restaurant_id);
 CREATE INDEX idx_visits_visit_date ON visits(visit_date DESC);
 ```
 
-### Data Relationships
+### Database ER Diagram
+
+```mermaid
+erDiagram
+    RESTAURANTS {
+        uint id PK "Primary Key"
+        string name "맛집 이름"
+        string address "주소"
+        float latitude "위도"
+        float longitude "경도"
+        string category "카테고리"
+        string phone "전화번호"
+        timestamp created_at "생성일"
+        timestamp updated_at "수정일"
+        timestamp deleted_at "삭제일(Soft Delete)"
+    }
+    
+    VISITS {
+        uint id PK "Primary Key"
+        uint restaurant_id FK "맛집 ID(NULL 허용)"
+        timestamp visit_date "방문일"
+        timestamp created_at "생성일"
+        timestamp updated_at "수정일"
+        timestamp deleted_at "삭제일(Soft Delete)"
+    }
+    
+    RESTAURANTS ||--o{ VISITS : "has many visits"
+    
+    note "맛집 삭제 시 방문기록의 restaurant_id는 NULL로 설정되어 기록이 보존됨"
 ```
-Restaurant (1) ←─────→ (N) Visit
-    │                    │
-    │                    │
-    ▼                    ▼
-Soft Delete          Foreign Key
-(deleted_at)         (ON DELETE SET NULL)
+
+### Data Relationships
+
+```mermaid
+graph LR
+    A[Restaurant<br/>맛집] -->|1:N| B[Visit<br/>방문기록]
+    A -->|Soft Delete| A1[deleted_at<br/>소프트 삭제]
+    B -->|Foreign Key| B1[restaurant_id<br/>ON DELETE SET NULL]
+    
+    style A fill:#e3f2fd
+    style B fill:#f3e5f5
+    style A1 fill:#ffebee
+    style B1 fill:#fff3e0
 ```
 
 ## API 아키텍처
@@ -274,72 +354,89 @@ Backend:
 ## 배포 아키텍처
 
 ### Render.com Infrastructure
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    Render.com Services                         │
-├─────────────────────────────────────────────────────────────────┤
-│  Frontend (Static Site)                                        │
-│  ├── CDN Distribution                                          │
-│  ├── Automatic HTTPS                                           │
-│  └── SPA Routing (_redirects)                                  │
-│                                                                 │
-│  Backend (Web Service)                                         │
-│  ├── Go Runtime Environment                                    │
-│  ├── Automatic Scaling                                         │
-│  └── Health Check Monitoring                                   │
-│                                                                 │
-│  Database (PostgreSQL)                                         │
-│  ├── Managed Database Service                                  │
-│  ├── Automatic Backups                                         │
-│  └── Connection Pooling                                        │
-└─────────────────────────────────────────────────────────────────┘
+
+```mermaid
+graph TB
+    subgraph "Render.com Services"
+        subgraph "Frontend (Static Site)"
+            F1[CDN Distribution<br/>전세계 배포]
+            F2[Automatic HTTPS<br/>SSL 인증서]
+            F3[SPA Routing<br/>_redirects 설정]
+        end
+        
+        subgraph "Backend (Web Service)"
+            B1[Go Runtime Environment<br/>서버 실행 환경]
+            B2[Automatic Scaling<br/>자동 확장]
+            B3[Health Check Monitoring<br/>상태 모니터링]
+        end
+        
+        subgraph "Database (PostgreSQL)"
+            D1[Managed Database Service<br/>관리형 DB 서비스]
+            D2[Automatic Backups<br/>자동 백업]
+            D3[Connection Pooling<br/>연결 풀 관리]
+        end
+    end
+    
+    U[Users<br/>사용자] --> F1
+    F1 --> B1
+    B1 --> D1
+    
+    style F1 fill:#e1f5fe
+    style B1 fill:#e8f5e8
+    style D1 fill:#fff3e0
 ```
 
 ### CI/CD Pipeline
-```
-GitHub Push
-        │
-        ▼
-Render.com Webhook
-        │
-        ▼
-Build Process
-        │
-        ├── Frontend: npm run build
-        └── Backend: go build
-        │
-        ▼
-Deployment
-        │
-        ├── Static Site Deploy
-        └── Web Service Deploy
-        │
-        ▼
-Health Check
-        │
-        ▼
-Live Service
+
+```mermaid
+flowchart TD
+    A[GitHub Push<br/>코드 푸시] --> B[Render.com Webhook<br/>자동 트리거]
+    
+    B --> C{Build Process<br/>빌드 프로세스}
+    
+    C --> D[Frontend Build<br/>npm run build]
+    C --> E[Backend Build<br/>go build]
+    
+    D --> F[Static Site Deploy<br/>정적 사이트 배포]
+    E --> G[Web Service Deploy<br/>웹 서비스 배포]
+    
+    F --> H[Health Check<br/>상태 확인]
+    G --> H
+    
+    H --> I{Deploy Success?<br/>배포 성공?}
+    
+    I -->|Yes| J[Live Service<br/>서비스 운영]
+    I -->|No| K[Rollback<br/>이전 버전으로 복원]
+    
+    K --> L[Error Notification<br/>오류 알림]
+    
+    style A fill:#e3f2fd
+    style B fill:#f3e5f5
+    style C fill:#fff3e0
+    style J fill:#e8f5e8
+    style K fill:#ffebee
 ```
 
 ## 모니터링 아키텍처
 
 ### Health Check System
-```
-Frontend Health Indicator
-        │ (10초 간격)
-        ▼
-GET /health
-        │
-        ▼
-Backend Health Check
-        │
-        ├── Server Status
-        ├── Database Connectivity
-        ├── Service Version
-        └── Timestamp
-        │
-        ▼
-Real-time Status Display
+
+```mermaid
+sequenceDiagram
+    participant FE as Frontend<br/>Health Indicator
+    participant BE as Backend<br/>/health Endpoint
+    participant DB as Database
+    
+    loop Every 10 seconds
+        FE->>BE: GET /health
+        BE->>DB: Check Connectivity
+        DB-->>BE: Connection Status
+        BE-->>FE: Health Response
+        Note over BE,FE: {<br/>  status: "healthy",<br/>  timestamp: "2024-06-23T...",<br/>  service: "lunch-app-backend",<br/>  version: "1.0.0"<br/>}
+        FE->>FE: Update UI Status
+    end
+    
+    Note over FE: 🟢 연결됨 / 🔴 연결 끊김<br/>실시간 상태 표시
 ```
 
 ### Error Handling Strategy
