@@ -1,0 +1,124 @@
+<mxfile host="app.diagrams.net" modified="2024-06-23T10:30:00.000Z" agent="5.0" etag="abc123" version="21.1.2" type="device">
+  <diagram name="System Architecture" id="system-arch">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- User -->
+        <mxCell id="user" value="사용자" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="50" y="200" width="30" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Frontend Layer -->
+        <mxCell id="frontend-layer" value="Frontend Layer" style="swimlane;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#01579b;" vertex="1" parent="1">
+          <mxGeometry x="150" y="100" width="250" height="200" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="react-app" value="React App&#xa;(TypeScript)&#xa;&#xa;• 컴포넌트 (UI)&#xa;• 훅 (비즈니스 로직)&#xa;• API 레이어&#xa;• 상태 관리 (React Query)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1976d2;" vertex="1" parent="frontend-layer">
+          <mxGeometry x="20" y="40" width="210" height="140" as="geometry" />
+        </mxCell>
+        
+        <!-- External APIs -->
+        <mxCell id="external-apis" value="External APIs" style="swimlane;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;" vertex="1" parent="1">
+          <mxGeometry x="450" y="100" width="200" height="150" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="kakao-api" value="Kakao Maps API&#xa;&#xa;• 지도 표시&#xa;• 장소 검색&#xa;• 위치 서비스" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1bee7;strokeColor=#8e24aa;" vertex="1" parent="external-apis">
+          <mxGeometry x="20" y="40" width="160" height="90" as="geometry" />
+        </mxCell>
+        
+        <!-- Backend Layer -->
+        <mxCell id="backend-layer" value="Backend Layer" style="swimlane;whiteSpace=wrap;html=1;fillColor=#e8f5e8;strokeColor=#2e7d32;" vertex="1" parent="1">
+          <mxGeometry x="150" y="350" width="300" height="200" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="go-server" value="Go Server (Gin Framework)&#xa;&#xa;• API Routes (/api/*, /health)&#xa;• 핸들러 (비즈니스 로직)&#xa;• 모델 (데이터 구조)&#xa;• 미들웨어 (CORS, 로깅)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#388e3c;" vertex="1" parent="backend-layer">
+          <mxGeometry x="20" y="40" width="260" height="140" as="geometry" />
+        </mxCell>
+        
+        <!-- Database Layer -->
+        <mxCell id="database-layer" value="Database Layer" style="swimlane;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#ef6c00;" vertex="1" parent="1">
+          <mxGeometry x="500" y="350" width="250" height="200" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="postgresql" value="PostgreSQL&#xa;(Production)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#ffe0b2;strokeColor=#f57c00;" vertex="1" parent="database-layer">
+          <mxGeometry x="30" y="40" width="80" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="sqlite" value="SQLite&#xa;(Development)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#ffe0b2;strokeColor=#f57c00;" vertex="1" parent="database-layer">
+          <mxGeometry x="140" y="40" width="80" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Infrastructure -->
+        <mxCell id="infrastructure" value="Render.com Infrastructure" style="swimlane;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c2185b;" vertex="1" parent="1">
+          <mxGeometry x="150" y="600" width="500" height="150" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="static-site" value="Static Site&#xa;(Frontend)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8bbd9;strokeColor=#d81b60;" vertex="1" parent="infrastructure">
+          <mxGeometry x="30" y="40" width="120" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="web-service" value="Web Service&#xa;(Backend)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8bbd9;strokeColor=#d81b60;" vertex="1" parent="infrastructure">
+          <mxGeometry x="190" y="40" width="120" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="db-service" value="Database Service&#xa;(PostgreSQL)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8bbd9;strokeColor=#d81b60;" vertex="1" parent="infrastructure">
+          <mxGeometry x="350" y="40" width="120" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- Connections -->
+        <mxCell id="user-to-react" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="user" target="react-app">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="react-to-kakao" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;" edge="1" parent="1" source="react-app" target="kakao-api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="react-to-backend" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="react-app" target="go-server">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="backend-to-postgresql" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="go-server" target="postgresql">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="backend-to-sqlite" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;" edge="1" parent="1" source="go-server" target="sqlite">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- Deployment connections -->
+        <mxCell id="react-to-static" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;dashed=1;" edge="1" parent="1" source="react-app" target="static-site">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="backend-to-web" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;dashed=1;" edge="1" parent="1" source="go-server" target="web-service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="postgresql-to-db" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;dashed=1;" edge="1" parent="1" source="postgresql" target="db-service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- Labels -->
+        <mxCell id="label1" value="웹 브라우저 접근" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="85" y="180" width="90" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="label2" value="HTTP/HTTPS&#xa;지도 API 호출" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="400" y="80" width="80" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="label3" value="HTTP/HTTPS&#xa;REST API 호출" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="240" y="300" width="80" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="label4" value="Database Driver&#xa;SQL 쿼리" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="460" y="450" width="80" height="30" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
