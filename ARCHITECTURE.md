@@ -1,6 +1,85 @@
 # Lunch App 아키텍처 문서
 
-## 전체 시스템 아키텍처
+## 전체 시스템 아키텍처 (PlantUML)
+
+```plantuml
+@startuml
+!theme plain
+title Lunch App 전체 시스템 아키텍처
+
+!define RECTANGLE class
+
+actor "사용자" as User
+package "Frontend Layer" {
+    RECTANGLE "React App\n(TypeScript)" as React {
+        + 컴포넌트 (UI)
+        + 훅 (비즈니스 로직)
+        + API 레이어
+        + 상태 관리 (React Query)
+    }
+}
+
+cloud "External APIs" {
+    RECTANGLE "Kakao Maps API" as KakaoAPI {
+        + 지도 표시
+        + 장소 검색
+        + 위치 서비스
+    }
+}
+
+package "Backend Layer" {
+    RECTANGLE "Go Server\n(Gin Framework)" as GoServer {
+        + API Routes (/api/*, /health)
+        + 핸들러 (비즈니스 로직)
+        + 모델 (데이터 구조)
+        + 미들웨어 (CORS, 로깅)
+    }
+}
+
+package "Database Layer" {
+    database "PostgreSQL\n(Production)" as PostgreSQL
+    database "SQLite\n(Development)" as SQLite
+}
+
+package "Infrastructure" {
+    cloud "Render.com" as Render {
+        RECTANGLE "Static Site\n(Frontend)" as StaticSite
+        RECTANGLE "Web Service\n(Backend)" as WebService
+        RECTANGLE "Database Service\n(PostgreSQL)" as DBService
+    }
+}
+
+' 관계 정의
+User --> React : "웹 브라우저 접근"
+React --> KakaoAPI : "HTTP/HTTPS\n지도 API 호출"
+React --> GoServer : "HTTP/HTTPS\nREST API 호출"
+GoServer --> PostgreSQL : "Database Driver\nSQL 쿼리"
+GoServer --> SQLite : "개발환경\nSQL 쿼리"
+
+' 배포 관계
+React --> StaticSite : "빌드 배포"
+GoServer --> WebService : "서버 배포"
+PostgreSQL --> DBService : "관리형 DB"
+
+' 스타일링
+skinparam backgroundColor white
+skinparam rectangle {
+    BackgroundColor lightblue
+    BorderColor darkblue
+}
+skinparam cloud {
+    BackgroundColor lightgreen
+    BorderColor darkgreen
+}
+skinparam database {
+    BackgroundColor lightyellow
+    BorderColor orange
+}
+
+@enduml
+```
+
+## 상세 시스템 아키텍처 (Mermaid)
 
 ```mermaid
 graph TB
@@ -70,7 +149,114 @@ graph TB
 
 ## 프론트엔드 아키텍처
 
-### Component Architecture
+### Component Architecture (PlantUML)
+
+```plantuml
+@startuml
+!theme plain
+title Frontend Component Architecture
+
+package "src/" {
+    class "App.tsx" as App {
+        + 메인 애플리케이션 컴포넌트
+        + 탭 네비게이션 관리
+        + 전역 상태 관리
+    }
+    
+    package "components/" {
+        class "RecommendTab.tsx" as Recommend {
+            + 맛집 추천 로직
+            + 지도 통합
+            + 카카오맵 검색
+        }
+        
+        class "KakaoMap.tsx" as KakaoMap {
+            + 지도 표시
+            + 마커 관리
+            + 장소 검색
+        }
+        
+        class "MyRestaurantsTab.tsx" as MyRestaurants {
+            + 맛집 목록 관리
+            + CRUD 작업
+            + PopupModal 통합
+        }
+        
+        class "VisitsTab.tsx" as Visits {
+            + 방문 기록 관리
+            + 시간대 처리
+            + 삭제된 맛집 처리
+        }
+        
+        class "PopupModal.tsx" as PopupModal {
+            + 통합 모달 시스템
+            + 알림/확인 대화상자
+            + 사용자 피드백
+        }
+        
+        class "HealthIndicator.tsx" as HealthIndicator {
+            + 백엔드 상태 모니터링
+            + 실시간 헬스체크
+            + 10초 간격 체크
+        }
+    }
+    
+    package "hooks/" {
+        class "useHealthCheck.ts" as HealthHook {
+            + 헬스체크 로직
+            + 상태 관리
+            + 에러 처리
+        }
+    }
+    
+    package "utils/" {
+        class "kakaoMapLoader.ts" as MapLoader {
+            + 카카오맵 스크립트 로딩
+            + 에러 처리
+            + 환경별 설정
+        }
+    }
+    
+    class "api.ts" as API {
+        + REST API 클라이언트
+        + 에러 처리
+        + 환경변수 관리
+    }
+}
+
+' 의존성 관계
+App --> Recommend
+App --> MyRestaurants  
+App --> Visits
+App --> PopupModal
+App --> HealthIndicator
+
+Recommend --> KakaoMap
+Recommend --> MapLoader
+MyRestaurants --> PopupModal
+Visits --> PopupModal
+HealthIndicator --> HealthHook
+
+Recommend --> API
+MyRestaurants --> API
+Visits --> API
+HealthHook --> API
+
+KakaoMap --> MapLoader
+
+skinparam class {
+    BackgroundColor lightblue
+    BorderColor darkblue
+}
+skinparam package {
+    BackgroundColor lightgreen
+    BorderColor darkgreen
+}
+
+@enduml
+```
+
+### Component Architecture (Mermaid)
 
 ```mermaid
 graph TD
@@ -248,7 +434,145 @@ CREATE INDEX idx_visits_restaurant_id ON visits(restaurant_id);
 CREATE INDEX idx_visits_visit_date ON visits(visit_date DESC);
 ```
 
-### Database ER Diagram
+### Database ER Diagram (PlantUML)
+
+```plantuml
+@startuml
+!theme plain
+title Database Schema (ER Diagram)
+
+entity "restaurants" as restaurant {
+    * id : uint <<PK>>
+    --
+    * name : string
+    * address : string  
+    * latitude : float
+    * longitude : float
+    * category : string
+    * phone : string
+    * created_at : timestamp
+    * updated_at : timestamp
+    * deleted_at : timestamp <<nullable>>
+}
+
+entity "visits" as visit {
+    * id : uint <<PK>>
+    --
+    restaurant_id : uint <<FK, nullable>>
+    * visit_date : timestamp
+    * created_at : timestamp
+    * updated_at : timestamp
+    * deleted_at : timestamp <<nullable>>
+}
+
+' 관계 정의
+restaurant ||--o{ visit : "has many visits\n(ON DELETE SET NULL)"
+
+note right of restaurant : Soft Delete 패턴\n삭제 시 deleted_at 설정
+note right of visit : 맛집 삭제 시에도\n방문 기록 유지
+note bottom of visit : restaurant_id가 NULL이면\n"삭제된 맛집"으로 표시
+
+' 인덱스 표시
+note bottom of restaurant
+  **Indexes:**
+  - idx_restaurants_deleted_at
+  - PRIMARY KEY (id)
+end note
+
+note top of visit
+  **Indexes:**
+  - idx_visits_deleted_at
+  - idx_visits_restaurant_id  
+  - idx_visits_visit_date (DESC)
+  - PRIMARY KEY (id)
+end note
+
+@enduml
+```
+
+### RESTful API Structure (PlantUML)
+
+```plantuml
+@startuml
+!theme plain
+title RESTful API Architecture
+
+package "API Endpoints" {
+    rectangle "Health Check" as Health {
+        GET /health
+        --
+        Response:
+        - status: "healthy"
+        - timestamp: ISO8601
+        - service: "lunch-app-backend"
+        - version: "1.0.0"
+    }
+    
+    rectangle "Restaurants API" as RestaurantAPI {
+        GET /api/restaurants/
+        POST /api/restaurants/
+        GET /api/restaurants/{id}
+        DELETE /api/restaurants/{id}
+        --
+        Features:
+        - CRUD Operations
+        - Soft Delete
+        - Input Validation
+        - Error Handling
+    }
+    
+    rectangle "Visits API" as VisitAPI {
+        GET /api/visits/
+        POST /api/visits/
+        DELETE /api/visits/{id}
+        --
+        Features:
+        - Asia/Seoul Timezone
+        - Deleted Restaurant Handling
+        - Date Formatting
+        - Visit History
+    }
+}
+
+package "Request Flow" {
+    actor "Client" as Client
+    rectangle "Gin Router" as Router
+    rectangle "CORS Middleware" as CORS
+    rectangle "Route Handler" as Handler
+    rectangle "Business Logic" as Logic
+    rectangle "GORM (ORM)" as ORM
+    database "Database" as DB
+}
+
+Client --> Router : HTTP Request
+Router --> CORS : Security Check
+CORS --> Handler : Route to Handler
+Handler --> Logic : Execute Logic
+Logic --> ORM : Database Query
+ORM --> DB : SQL Commands
+DB --> ORM : Query Results
+ORM --> Logic : Mapped Objects
+Logic --> Handler : Response Data
+Handler --> Client : JSON Response
+
+' API 연결
+Health --> Handler
+RestaurantAPI --> Handler  
+VisitAPI --> Handler
+
+skinparam rectangle {
+    BackgroundColor lightblue
+    BorderColor darkblue
+}
+skinparam database {
+    BackgroundColor lightyellow
+    BorderColor orange
+}
+
+@enduml
+```
+
+### Database ER Diagram (Mermaid)
 
 ```mermaid
 erDiagram
