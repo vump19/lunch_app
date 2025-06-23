@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="1002px" height="702px" viewBox="-0.5 -0.5 1002 702" content="&lt;mxfile host=&quot;app.diagrams.net&quot; modified=&quot;2024-06-23T10:30:00.000Z&quot; agent=&quot;5.0&quot; etag=&quot;abc123&quot; version=&quot;21.1.2&quot; type=&quot;device&quot;&gt;&lt;diagram name=&quot;System Architecture&quot; id=&quot;system-arch&quot;&gt;&lt;mxGraphModel dx=&quot;1422&quot; dy=&quot;794&quot; grid=&quot;1&quot; gridSize=&quot;10&quot; guides=&quot;1&quot; tooltips=&quot;1&quot; connect=&quot;1&quot; arrows=&quot;1&quot; fold=&quot;1&quot; page=&quot;1&quot; pageScale=&quot;1&quot; pageWidth=&quot;1169&quot; pageHeight=&quot;827&quot; math=&quot;0&quot; shadow=&quot;0&quot;&gt;&lt;root&gt;&lt;mxCell id=&quot;0&quot;/&gt;&lt;mxCell id=&quot;1&quot; parent=&quot;0&quot;/&gt;&lt;mxCell id=&quot;user&quot; value=&quot;사용자&quot; style=&quot;shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#dae8fc;strokeColor=#6c8ebf;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;50&quot; y=&quot;200&quot; width=&quot;30&quot; height=&quot;60&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;frontend-layer&quot; value=&quot;Frontend Layer&quot; style=&quot;swimlane;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#01579b;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;150&quot; y=&quot;100&quot; width=&quot;250&quot; height=&quot;200&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;react-app&quot; value=&quot;React App&amp;#xa;(TypeScript)&amp;#xa;&amp;#xa;• 컴포넌트 (UI)&amp;#xa;• 훅 (비즈니스 로직)&amp;#xa;• API 레이어&amp;#xa;• 상태 관리 (React Query)&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1976d2;&quot; vertex=&quot;1&quot; parent=&quot;frontend-layer&quot;&gt;&lt;mxGeometry x=&quot;20&quot; y=&quot;40&quot; width=&quot;210&quot; height=&quot;140&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;external-apis&quot; value=&quot;External APIs&quot; style=&quot;swimlane;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;450&quot; y=&quot;100&quot; width=&quot;200&quot; height=&quot;150&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;kakao-api&quot; value=&quot;Kakao Maps API&amp;#xa;&amp;#xa;• 지도 표시&amp;#xa;• 장소 검색&amp;#xa;• 위치 서비스&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#e1bee7;strokeColor=#8e24aa;&quot; vertex=&quot;1&quot; parent=&quot;external-apis&quot;&gt;&lt;mxGeometry x=&quot;20&quot; y=&quot;40&quot; width=&quot;160&quot; height=&quot;90&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;backend-layer&quot; value=&quot;Backend Layer&quot; style=&quot;swimlane;whiteSpace=wrap;html=1;fillColor=#e8f5e8;strokeColor=#2e7d32;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;150&quot; y=&quot;350&quot; width=&quot;300&quot; height=&quot;200&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;go-server&quot; value=&quot;Go Server (Gin Framework)&amp;#xa;&amp;#xa;• API Routes (/api/*, /health)&amp;#xa;• 핸들러 (비즈니스 로직)&amp;#xa;• 모델 (데이터 구조)&amp;#xa;• 미들웨어 (CORS, 로깅)&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#388e3c;&quot; vertex=&quot;1&quot; parent=&quot;backend-layer&quot;&gt;&lt;mxGeometry x=&quot;20&quot; y=&quot;40&quot; width=&quot;260&quot; height=&quot;140&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;database-layer&quot; value=&quot;Database Layer&quot; style=&quot;swimlane;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#ef6c00;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;500&quot; y=&quot;350&quot; width=&quot;250&quot; height=&quot;200&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;postgresql&quot; value=&quot;PostgreSQL&amp;#xa;(Production)&quot; style=&quot;shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#ffe0b2;strokeColor=#f57c00;&quot; vertex=&quot;1&quot; parent=&quot;database-layer&quot;&gt;&lt;mxGeometry x=&quot;30&quot; y=&quot;40&quot; width=&quot;80&quot; height=&quot;60&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;sqlite&quot; value=&quot;SQLite&amp;#xa;(Development)&quot; style=&quot;shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#ffe0b2;strokeColor=#f57c00;&quot; vertex=&quot;1&quot; parent=&quot;database-layer&quot;&gt;&lt;mxGeometry x=&quot;140&quot; y=&quot;40&quot; width=&quot;80&quot; height=&quot;60&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;infrastructure&quot; value=&quot;Render.com Infrastructure&quot; style=&quot;swimlane;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c2185b;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;150&quot; y=&quot;600&quot; width=&quot;500&quot; height=&quot;150&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;static-site&quot; value=&quot;Static Site&amp;#xa;(Frontend)&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#f8bbd9;strokeColor=#d81b60;&quot; vertex=&quot;1&quot; parent=&quot;infrastructure&quot;&gt;&lt;mxGeometry x=&quot;30&quot; y=&quot;40&quot; width=&quot;120&quot; height=&quot;80&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;web-service&quot; value=&quot;Web Service&amp;#xa;(Backend)&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#f8bbd9;strokeColor=#d81b60;&quot; vertex=&quot;1&quot; parent=&quot;infrastructure&quot;&gt;&lt;mxGeometry x=&quot;190&quot; y=&quot;40&quot; width=&quot;120&quot; height=&quot;80&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;db-service&quot; value=&quot;Database Service&amp;#xa;(PostgreSQL)&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#f8bbd9;strokeColor=#d81b60;&quot; vertex=&quot;1&quot; parent=&quot;infrastructure&quot;&gt;&lt;mxGeometry x=&quot;350&quot; y=&quot;40&quot; width=&quot;120&quot; height=&quot;80&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;user-to-react&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;&quot; edge=&quot;1&quot; parent=&quot;1&quot; source=&quot;user&quot; target=&quot;react-app&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;react-to-kakao&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;&quot; edge=&quot;1&quot; parent=&quot;1&quot; source=&quot;react-app&quot; target=&quot;kakao-api&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;react-to-backend&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;&quot; edge=&quot;1&quot; parent=&quot;1&quot; source=&quot;react-app&quot; target=&quot;go-server&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;backend-to-postgresql&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;&quot; edge=&quot;1&quot; parent=&quot;1&quot; source=&quot;go-server&quot; target=&quot;postgresql&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;backend-to-sqlite&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;&quot; edge=&quot;1&quot; parent=&quot;1&quot; source=&quot;go-server&quot; target=&quot;sqlite&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;react-to-static&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;dashed=1;&quot; edge=&quot;1&quot; parent=&quot;1&quot; source=&quot;react-app&quot; target=&quot;static-site&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;backend-to-web&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;dashed=1;&quot; edge=&quot;1&quot; parent=&quot;1&quot; source=&quot;go-server&quot; target=&quot;web-service&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;postgresql-to-db&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;dashed=1;&quot; edge=&quot;1&quot; parent=&quot;1&quot; source=&quot;postgresql&quot; target=&quot;db-service&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;label1&quot; value=&quot;웹 브라우저 접근&quot; style=&quot;text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;85&quot; y=&quot;180&quot; width=&quot;90&quot; height=&quot;20&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;label2&quot; value=&quot;HTTP/HTTPS&amp;#xa;지도 API 호출&quot; style=&quot;text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;400&quot; y=&quot;80&quot; width=&quot;80&quot; height=&quot;30&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;label3&quot; value=&quot;HTTP/HTTPS&amp;#xa;REST API 호출&quot; style=&quot;text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;240&quot; y=&quot;300&quot; width=&quot;80&quot; height=&quot;30&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;label4&quot; value=&quot;Database Driver&amp;#xa;SQL 쿼리&quot; style=&quot;text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;460&quot; y=&quot;450&quot; width=&quot;80&quot; height=&quot;30&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;&lt;/root&gt;&lt;/mxGraphModel&gt;&lt;/diagram&gt;&lt;/mxfile&gt;" style="background-color: rgb(255, 255, 255);">
+  <defs/>
+  <g>
+    <!-- User Actor -->
+    <g id="user">
+      <path d="M 50 230 C 50 222.27 56.27 216 64 216 C 71.73 216 78 222.27 78 230 C 78 237.73 71.73 244 64 244 C 56.27 244 50 237.73 50 230 Z M 64 252 L 64 276 M 56 260 L 72 260 M 64 276 L 56 292 M 64 276 L 72 292" fill="none" stroke="#6c8ebf" stroke-width="2"/>
+      <text x="65" y="308" text-anchor="middle" font-size="12" font-family="Helvetica" fill="#000000">사용자</text>
+    </g>
+    
+    <!-- Frontend Layer -->
+    <g id="frontend-layer">
+      <rect x="150" y="100" width="250" height="200" rx="8" ry="8" fill="#e1f5fe" stroke="#01579b" stroke-width="2"/>
+      <text x="155" y="118" font-size="12" font-family="Helvetica" font-weight="bold" fill="#01579b">Frontend Layer</text>
+      
+      <!-- React App -->
+      <rect x="170" y="140" width="210" height="140" rx="8" ry="8" fill="#bbdefb" stroke="#1976d2" stroke-width="2"/>
+      <text x="275" y="158" text-anchor="middle" font-size="12" font-family="Helvetica" font-weight="bold" fill="#1976d2">React App</text>
+      <text x="275" y="174" text-anchor="middle" font-size="12" font-family="Helvetica" fill="#1976d2">(TypeScript)</text>
+      <text x="175" y="195" font-size="10" font-family="Helvetica" fill="#1976d2">• 컴포넌트 (UI)</text>
+      <text x="175" y="210" font-size="10" font-family="Helvetica" fill="#1976d2">• 훅 (비즈니스 로직)</text>
+      <text x="175" y="225" font-size="10" font-family="Helvetica" fill="#1976d2">• API 레이어</text>
+      <text x="175" y="240" font-size="10" font-family="Helvetica" fill="#1976d2">• 상태 관리 (React Query)</text>
+    </g>
+    
+    <!-- External APIs -->
+    <g id="external-apis">
+      <rect x="450" y="100" width="200" height="150" rx="8" ry="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/>
+      <text x="455" y="118" font-size="12" font-family="Helvetica" font-weight="bold" fill="#7b1fa2">External APIs</text>
+      
+      <!-- Kakao API -->
+      <rect x="470" y="140" width="160" height="90" rx="8" ry="8" fill="#e1bee7" stroke="#8e24aa" stroke-width="2"/>
+      <text x="550" y="158" text-anchor="middle" font-size="12" font-family="Helvetica" font-weight="bold" fill="#8e24aa">Kakao Maps API</text>
+      <text x="475" y="178" font-size="10" font-family="Helvetica" fill="#8e24aa">• 지도 표시</text>
+      <text x="475" y="193" font-size="10" font-family="Helvetica" fill="#8e24aa">• 장소 검색</text>
+      <text x="475" y="208" font-size="10" font-family="Helvetica" fill="#8e24aa">• 위치 서비스</text>
+    </g>
+    
+    <!-- Backend Layer -->
+    <g id="backend-layer">
+      <rect x="150" y="350" width="300" height="200" rx="8" ry="8" fill="#e8f5e8" stroke="#2e7d32" stroke-width="2"/>
+      <text x="155" y="368" font-size="12" font-family="Helvetica" font-weight="bold" fill="#2e7d32">Backend Layer</text>
+      
+      <!-- Go Server -->
+      <rect x="170" y="390" width="260" height="140" rx="8" ry="8" fill="#c8e6c9" stroke="#388e3c" stroke-width="2"/>
+      <text x="300" y="408" text-anchor="middle" font-size="12" font-family="Helvetica" font-weight="bold" fill="#388e3c">Go Server (Gin Framework)</text>
+      <text x="175" y="428" font-size="10" font-family="Helvetica" fill="#388e3c">• API Routes (/api/*, /health)</text>
+      <text x="175" y="443" font-size="10" font-family="Helvetica" fill="#388e3c">• 핸들러 (비즈니스 로직)</text>
+      <text x="175" y="458" font-size="10" font-family="Helvetica" fill="#388e3c">• 모델 (데이터 구조)</text>
+      <text x="175" y="473" font-size="10" font-family="Helvetica" fill="#388e3c">• 미들웨어 (CORS, 로깅)</text>
+    </g>
+    
+    <!-- Database Layer -->
+    <g id="database-layer">
+      <rect x="500" y="350" width="250" height="200" rx="8" ry="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="2"/>
+      <text x="505" y="368" font-size="12" font-family="Helvetica" font-weight="bold" fill="#ef6c00">Database Layer</text>
+      
+      <!-- PostgreSQL -->
+      <g id="postgresql">
+        <ellipse cx="570" cy="390" rx="40" ry="15" fill="#ffe0b2" stroke="#f57c00" stroke-width="2"/>
+        <rect x="530" y="390" width="80" height="45" fill="#ffe0b2" stroke="#f57c00" stroke-width="2"/>
+        <ellipse cx="570" cy="435" rx="40" ry="15" fill="#ffe0b2" stroke="#f57c00" stroke-width="2"/>
+        <text x="570" y="408" text-anchor="middle" font-size="10" font-family="Helvetica" fill="#f57c00">PostgreSQL</text>
+        <text x="570" y="420" text-anchor="middle" font-size="10" font-family="Helvetica" fill="#f57c00">(Production)</text>
+      </g>
+      
+      <!-- SQLite -->
+      <g id="sqlite">
+        <ellipse cx="680" cy="390" rx="40" ry="15" fill="#ffe0b2" stroke="#f57c00" stroke-width="2"/>
+        <rect x="640" y="390" width="80" height="45" fill="#ffe0b2" stroke="#f57c00" stroke-width="2"/>
+        <ellipse cx="680" cy="435" rx="40" ry="15" fill="#ffe0b2" stroke="#f57c00" stroke-width="2"/>
+        <text x="680" y="408" text-anchor="middle" font-size="10" font-family="Helvetica" fill="#f57c00">SQLite</text>
+        <text x="680" y="420" text-anchor="middle" font-size="10" font-family="Helvetica" fill="#f57c00">(Development)</text>
+      </g>
+    </g>
+    
+    <!-- Infrastructure -->
+    <g id="infrastructure">
+      <rect x="150" y="600" width="500" height="150" rx="8" ry="8" fill="#fce4ec" stroke="#c2185b" stroke-width="2"/>
+      <text x="155" y="618" font-size="12" font-family="Helvetica" font-weight="bold" fill="#c2185b">Render.com Infrastructure</text>
+      
+      <!-- Static Site -->
+      <rect x="180" y="640" width="120" height="80" rx="8" ry="8" fill="#f8bbd9" stroke="#d81b60" stroke-width="2"/>
+      <text x="240" y="668" text-anchor="middle" font-size="11" font-family="Helvetica" fill="#d81b60">Static Site</text>
+      <text x="240" y="682" text-anchor="middle" font-size="11" font-family="Helvetica" fill="#d81b60">(Frontend)</text>
+      
+      <!-- Web Service -->
+      <rect x="340" y="640" width="120" height="80" rx="8" ry="8" fill="#f8bbd9" stroke="#d81b60" stroke-width="2"/>
+      <text x="400" y="668" text-anchor="middle" font-size="11" font-family="Helvetica" fill="#d81b60">Web Service</text>
+      <text x="400" y="682" text-anchor="middle" font-size="11" font-family="Helvetica" fill="#d81b60">(Backend)</text>
+      
+      <!-- Database Service -->
+      <rect x="500" y="640" width="120" height="80" rx="8" ry="8" fill="#f8bbd9" stroke="#d81b60" stroke-width="2"/>
+      <text x="560" y="668" text-anchor="middle" font-size="11" font-family="Helvetica" fill="#d81b60">Database Service</text>
+      <text x="560" y="682" text-anchor="middle" font-size="11" font-family="Helvetica" fill="#d81b60">(PostgreSQL)</text>
+    </g>
+    
+    <!-- Connections -->
+    <!-- User to React -->
+    <path d="M 80 230 L 120 230 L 120 210 L 170 210" fill="none" stroke="#666666" stroke-width="2" marker-end="url(#arrowhead)"/>
+    
+    <!-- React to Kakao -->
+    <path d="M 380 175 L 420 175 L 420 175 L 470 175" fill="none" stroke="#666666" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowhead)"/>
+    
+    <!-- React to Backend -->
+    <path d="M 275 280 L 275 320 L 275 390" fill="none" stroke="#666666" stroke-width="2" marker-end="url(#arrowhead)"/>
+    
+    <!-- Backend to PostgreSQL -->
+    <path d="M 430 460 L 470 460 L 470 410 L 530 410" fill="none" stroke="#666666" stroke-width="2" marker-end="url(#arrowhead)"/>
+    
+    <!-- Backend to SQLite -->
+    <path d="M 430 480 L 470 480 L 470 430 L 640 430" fill="none" stroke="#666666" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowhead)"/>
+    
+    <!-- Deployment connections -->
+    <path d="M 240 280 L 240 320 L 240 640" fill="none" stroke="#999999" stroke-width="2" stroke-dasharray="3,3" marker-end="url(#arrowhead)"/>
+    <path d="M 350 530 L 350 580 L 400 640" fill="none" stroke="#999999" stroke-width="2" stroke-dasharray="3,3" marker-end="url(#arrowhead)"/>
+    <path d="M 600 435 L 600 580 L 560 640" fill="none" stroke="#999999" stroke-width="2" stroke-dasharray="3,3" marker-end="url(#arrowhead)"/>
+    
+    <!-- Labels -->
+    <text x="100" y="225" font-size="10" font-family="Helvetica" fill="#666666">웹 브라우저 접근</text>
+    <text x="415" y="160" text-anchor="middle" font-size="9" font-family="Helvetica" fill="#666666">HTTP/HTTPS</text>
+    <text x="415" y="172" text-anchor="middle" font-size="9" font-family="Helvetica" fill="#666666">지도 API 호출</text>
+    <text x="240" y="335" text-anchor="middle" font-size="9" font-family="Helvetica" fill="#666666">HTTP/HTTPS</text>
+    <text x="240" y="347" text-anchor="middle" font-size="9" font-family="Helvetica" fill="#666666">REST API 호출</text>
+    <text x="480" y="440" text-anchor="middle" font-size="9" font-family="Helvetica" fill="#666666">Database Driver</text>
+    <text x="480" y="452" text-anchor="middle" font-size="9" font-family="Helvetica" fill="#666666">SQL 쿼리</text>
+  </g>
+  
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#666666"/>
+    </marker>
+  </defs>
+</svg>

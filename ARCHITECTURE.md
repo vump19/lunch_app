@@ -1,5 +1,9 @@
 # Lunch App 아키텍처 문서
 
+## 전체 시스템 아키텍처 (시각화)
+
+![시스템 아키텍처](docs/system-architecture.svg)
+
 ## 전체 시스템 아키텍처 (PlantUML)
 
 ```plantuml
