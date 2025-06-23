@@ -66,10 +66,15 @@ func GetAllVisits(c *gin.Context) {
 	}
 
 	var response []VisitResponse
+	
+	// 한국 시간대 설정
+	koreaLocation, _ := time.LoadLocation("Asia/Seoul")
+	
 	for _, visit := range visits {
-		// 날짜와 시간 포맷팅
-		date := visit.VisitDate.Format("2006-01-02")
-		time := visit.VisitDate.Format("15:04:05")
+		// 한국 시간대로 변환 후 포맷팅
+		koreaTime := visit.VisitDate.In(koreaLocation)
+		date := koreaTime.Format("2006-01-02")
+		timeStr := koreaTime.Format("15:04")
 
 		// 맛집이 삭제되었는지 확인
 		isDeleted := visit.Restaurant.ID == 0
@@ -87,7 +92,7 @@ func GetAllVisits(c *gin.Context) {
 			RestaurantName:    restaurantName,
 			RestaurantAddress: restaurantAddress,
 			Date:              date,
-			Time:              time,
+			Time:              timeStr,
 			IsDeleted:         isDeleted,
 		})
 	}
