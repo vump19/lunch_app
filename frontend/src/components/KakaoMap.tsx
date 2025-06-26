@@ -107,7 +107,7 @@ const KakaoMap: React.FC<{ onAddRestaurant?: (place: any) => void }> = ({ onAddR
       const searchOptions: any = {};
       if (myLocation) {
         searchOptions.location = new window.kakao.maps.LatLng(myLocation.lat, myLocation.lng);
-        searchOptions.radius = 2000;
+        searchOptions.radius = 10000; // 10km로 확장
       }
       ps.keywordSearch(
         keyword,
@@ -203,7 +203,7 @@ const KakaoMap: React.FC<{ onAddRestaurant?: (place: any) => void }> = ({ onAddR
           } else if (status === window.kakao.maps.services.Status.ZERO_RESULT) {
             setSearchResults([]);
             setMarkers([]);
-            setModalMessage("검색 결과가 없습니다.");
+            setModalMessage("반경 10Km 이내에 해당하는 음식점이 없습니다.");
             setIsModalOpen(true);
           } else {
             setSearchResults([]);
@@ -291,10 +291,10 @@ const KakaoMap: React.FC<{ onAddRestaurant?: (place: any) => void }> = ({ onAddR
           검색 중...
         </div>
       )}
-      {!isSearching && searchResults.length === 0 && (
+      {!isSearching && searchResults.length === 0 && keyword && (
         <div className="flex flex-col items-center justify-center py-8 text-gray-400">
           <span className="text-3xl mb-2">🔍</span>
-          <span>검색 결과가 없습니다.</span>
+          <span>반경 10Km 이내에 해당하는 음식점이 없습니다.</span>
         </div>
       )}
       {searchResults.length > 0 && (

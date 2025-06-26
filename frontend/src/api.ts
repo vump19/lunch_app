@@ -150,3 +150,26 @@ export const deleteVisit = async (id: number) => {
     throw new Error("방문 기록 삭제에 실패했습니다");
   }
 };
+
+export const updateVisit = async (id: number, visitDate: string) => {
+  try {
+    const body = {
+      VisitDate: visitDate,
+    };
+    
+    console.log("Updating visit:", { id, body });
+    
+    const url = `${API_BASE_URL}/api/visits/${id}`;
+    console.log('📡 Updating visit at:', url);
+    const response = await axios.put(url, body);
+    console.log("Update visit response:", response.data);
+    
+    return response.data;
+  } catch (error) {
+    console.error('Error updating visit:', error);
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.error || '방문 기록 수정에 실패했습니다');
+    }
+    throw new Error('방문 기록 수정에 실패했습니다');
+  }
+};

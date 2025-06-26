@@ -100,6 +100,54 @@ func GetAllVisits(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+// 방문 기록 수정
+func UpdateVisit(c *gin.Context) {
+	id := c.Param("id")
+	
+	var input struct {
+		VisitDate time.Time `json:"VisitDate" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// 기존 방문 기록 찾기
+	var visit models.Visit
+	if err := database.DB.First(&visit, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Visit record not found"})
+		return
+	}
+
+	// 방문 일자 업데이트
+	visit.VisitDate = input.VisitDate
+	if err := database.DB.Save(&visit).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update visit record"})
+		return
+	}
+
+	// 업데이트된 방문 기록을 레스토랑 정보와 함께 반환
+	database.DB.Preload("Restaurant").First(&visit, visit.ID)
+	
+	// 응답 형태로 변환
+	koreaLocation, _ := time.LoadLocation("Asia/Seoul")
+	koreaTime := visit.VisitDate.In(koreaLocation)
+	
+	response := gin.H{
+		"ID":                visit.ID,
+		"RestaurantID":      visit.RestaurantID,
+		"RestaurantName":    visit.Restaurant.Name,
+		"RestaurantAddress": visit.Restaurant.Address,
+		"Date":              koreaTime.Format("2006-01-02"),
+		"Time":              koreaTime.Format("15:04"),
+		"IsDeleted":         visit.Restaurant.ID == 0,
+		"message":           "Visit record updated successfully",
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
 // 방문 기록 삭제
 func DeleteVisit(c *gin.Context) {
 	id := c.Param("id")

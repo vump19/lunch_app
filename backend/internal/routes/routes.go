@@ -26,6 +26,7 @@ func Setup(router *gin.Engine) {
 		{
 			visitRoutes.GET("/", handlers.GetAllVisits)
 			visitRoutes.POST("/", handlers.CreateVisit)
+			visitRoutes.PUT("/:id", handlers.UpdateVisit)
 			visitRoutes.DELETE("/:id", handlers.DeleteVisit)
 		}
 	}

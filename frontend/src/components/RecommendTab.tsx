@@ -719,10 +719,58 @@ const RecommendTab: React.FC = () => {
           <div className="font-bold text-lg text-primary-700 mb-2">주변 맛집 목록</div>
           <div className="space-y-2 w-full">
             {nearbyRestaurants.map((r, index) => (
-              <div key={index} className="p-2 border-b last:border-b-0">
-                <div className="font-medium">{r.Name}</div>
+              <div 
+                key={index} 
+                className="p-3 border-b last:border-b-0 hover:bg-blue-50 cursor-pointer transition-colors rounded-lg"
+                onClick={() => {
+                  if (map && window.kakao && window.kakao.maps) {
+                    // 기존 마커와 인포윈도우 모두 닫기
+                    setMarkers(prevMarkers => {
+                      prevMarkers.forEach(marker => marker.setMap(null));
+                      return [];
+                    });
+                    setInfowindows(prevInfowindows => {
+                      prevInfowindows.forEach(infowindow => infowindow.close());
+                      return [];
+                    });
+                    if (directionsRenderer) {
+                      directionsRenderer.setMap(null);
+                    }
+
+                    // 선택한 맛집 위치로 이동
+                    const position = new window.kakao.maps.LatLng(r.Latitude, r.Longitude);
+                    map.setCenter(position);
+                    map.setLevel(3); // 가까이 확대
+
+                    // 마커 생성
+                    const marker = new window.kakao.maps.Marker({
+                      position: position,
+                      map: map,
+                      zIndex: 2000
+                    });
+
+                    // 인포윈도우 생성
+                    const infowindow = new window.kakao.maps.InfoWindow({
+                      content: `<div style="padding:8px;font-size:12px;text-align:center;">
+                        <div style="font-weight:bold;color:#4ECDC4;margin-bottom:4px;">${r.Name}</div>
+                        <div style="font-size:10px;color:#666;">${r.Address}</div>
+                        <div style="font-size:10px;color:#666;margin-top:2px;">${r.Category}</div>
+                        <div style="font-size:10px;color:#007bff;margin-top:2px;">거리: ${Math.round(r.distance)}m</div>
+                      </div>`
+                    });
+
+                    // 마커와 인포윈도우 상태 업데이트
+                    setMarkers([marker]);
+                    setInfowindows([infowindow]);
+
+                    // 인포윈도우 열기
+                    infowindow.open(map, marker);
+                  }
+                }}
+              >
+                <div className="font-medium text-gray-800">{r.Name}</div>
                 <div className="text-sm text-gray-600">{r.Address}</div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-gray-500 mt-1">
                   {r.Category} | {Math.round(r.distance)}m
                 </div>
               </div>

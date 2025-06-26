@@ -63,7 +63,13 @@ const App: React.FC = () => {
       {/* 헤더 */}
       <header className="bg-white shadow-sm sticky top-0 z-10">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-bold text-primary-600 tracking-tight">🍽️ Lunch App</h1>
+          <h1 
+            className="text-xl font-bold text-primary-600 tracking-tight cursor-pointer hover:text-primary-700 transition-colors"
+            onClick={() => setSelectedIndex(0)}
+            title="추천 탭으로 이동"
+          >
+            🍽️ Lunch App
+          </h1>
         </div>
       </header>
 
