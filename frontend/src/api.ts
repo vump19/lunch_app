@@ -102,21 +102,12 @@ export const fetchVisits = async () => {
 
 export const addVisit = async (restaurantId: number) => {
   try {
-    // 한국 시간대로 현재 시간 생성
+    // 현재 시간을 UTC로 전송 (백엔드에서 Seoul 시간대로 변환)
     const now = new Date();
-    const koreaTime = new Intl.DateTimeFormat('sv-SE', {
-      timeZone: 'Asia/Seoul',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    }).format(now);
     
     const body = {
       RestaurantID: restaurantId,
-      VisitDate: koreaTime.replace(' ', 'T') + '.000Z',
+      VisitDate: now.toISOString(),
     };
     
     console.log("Sending visit request:", body);

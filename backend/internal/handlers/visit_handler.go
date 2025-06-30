@@ -28,9 +28,13 @@ func CreateVisit(c *gin.Context) {
 		return
 	}
 
+	// 한국 시간대로 변환하여 저장
+	koreaLocation, _ := time.LoadLocation("Asia/Seoul")
+	visitDateKST := input.VisitDate.In(koreaLocation)
+
 	visit := models.Visit{
 		RestaurantID: input.RestaurantID,
-		VisitDate:    input.VisitDate,
+		VisitDate:    visitDateKST,
 	}
 
 	if err := database.DB.Create(&visit).Error; err != nil {
@@ -120,8 +124,10 @@ func UpdateVisit(c *gin.Context) {
 		return
 	}
 
-	// 방문 일자 업데이트
-	visit.VisitDate = input.VisitDate
+	// 방문 일자를 한국 시간대로 변환하여 업데이트
+	koreaLocation, _ := time.LoadLocation("Asia/Seoul")
+	visitDateKST := input.VisitDate.In(koreaLocation)
+	visit.VisitDate = visitDateKST
 	if err := database.DB.Save(&visit).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update visit record"})
 		return
@@ -131,7 +137,6 @@ func UpdateVisit(c *gin.Context) {
 	database.DB.Preload("Restaurant").First(&visit, visit.ID)
 	
 	// 응답 형태로 변환
-	koreaLocation, _ := time.LoadLocation("Asia/Seoul")
 	koreaTime := visit.VisitDate.In(koreaLocation)
 	
 	response := gin.H{

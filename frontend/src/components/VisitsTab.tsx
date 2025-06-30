@@ -57,14 +57,10 @@ const VisitsTab: React.FC = () => {
     if (!editingVisit) return;
 
     try {
-      // 날짜와 시간을 합쳐서 ISO 형식으로 변환
+      // 날짜와 시간을 합쳐서 ISO 형식으로 변환 (백엔드에서 Seoul 시간대로 변환)
       const dateTimeString = `${editingVisit.date}T${editingVisit.time}:00`;
       const localDate = new Date(dateTimeString);
-      
-      // 한국 시간대로 조정
-      const koreaOffset = 9 * 60; // 한국은 UTC+9
-      const utcTime = localDate.getTime() - (koreaOffset * 60 * 1000);
-      const isoString = new Date(utcTime).toISOString();
+      const isoString = localDate.toISOString();
 
       await updateVisit(editingVisit.id, isoString);
       queryClient.invalidateQueries(['visits']);
